@@ -97,7 +97,7 @@ class PitskillDataFetcher
                         'A Class' => '<span class="bg-red-500 text-white rounded-full px-3 py-1">A Class</span>',
                         'B Class' => '<span class="bg-blue-500 text-white rounded-full px-3 py-1">B Class</span>',
                         'C Class' => '<span class="bg-purple-500 text-white rounded-full px-3 py-1">C Class</span>',
-                        'Rookie' => '<span class="bg-orange-500 text-white rounded-full px-3 py-1">Rookie</span>',
+                        'Rookie' => '<span class="bg-gray-500 text-white rounded-full px-3 py-1">Rookie</span>',
                     ];
                     return array_key_exists($value, $map) ? $map[$value] : $value;
             case 'Signup Date':
@@ -155,9 +155,15 @@ class PitskillDataFetcher
                 'data' => $this->registrations,
             ],
         ];
+
         file_put_contents('data.json', json_encode($data));
     }
 }
 
-(new PitskillDataFetcher())->saveData();
-
+try {
+    print "Updating data!".PHP_EOL;
+    (new PitskillDataFetcher())->saveData();
+    print "Updated data!".PHP_EOL;
+} catch (\Throwable $th) {
+    print_r($th->getMessage());
+}
