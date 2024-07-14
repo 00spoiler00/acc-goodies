@@ -7,8 +7,8 @@ use Twig\Loader\FilesystemLoader;
 
 class PitskillData
 {
-    // private $ids = [11993,1422,9318,17425,15071,17011,14448,14233,15477,16957,15087,15713,17028,15095,17918,18028,17558];
-    private $ids = [17558];
+    private $ids = [11993,1422,9318,17425,15071,17011,14448,14233,15477,16957,15087,15713,17028,15095,17918,18028,17558];
+    // private $ids = [17558];
     
     private $driversData = [];
     private $driverColumns = [
@@ -26,15 +26,16 @@ class PitskillData
     
     private $registrationsData = [];
     private $registrationColumns = [
-        'Upcoming Event' => 'payload.0.event_name',
-        'On Date' => 'payload.0.start_date',
-        'Server' => 'payload.0.event_registrations.0.vehicle_registration.server.server_name',
-        'Server SoF' => 'payload.0.event_registrations.0.vehicle_registration.server.server_strength_of_field',
-        'Server Splits' => 'payload.0.event_registrations.0.vehicle_registration.server.server_split_index',
-        'Car' => 'payload.0.event_registrations.0.car.name',
-        'Track' => 'payload.0.track.track_name_long',
-        'Registration' => 'payload.0.registration_count',
-        'Broadcasted' => 'payload.0.broadcasters'
+        'Driver' => null,
+        'Upcoming Event' => 'event_name',
+        'On Date' => 'start_date',
+        'Server' => 'event_registrations.0.vehicle_registration.server.server_name',
+        'Server SoF' => 'event_registrations.0.vehicle_registration.server.server_strength_of_field',
+        'Server Splits' => 'event_registrations.0.vehicle_registration.server.server_split_index',
+        'Car' => 'event_registrations.0.car.name',
+        'Track' => 'track.track_name_long',
+        'Registration' => 'registration_count',
+        'Broadcasted' => 'broadcasters'
     ];
 
     private function fetchData()
@@ -46,14 +47,41 @@ class PitskillData
                 $driver[$column] = $this->transformValue($column, $this->getValue($data, $path));
             }
             $this->drivers[] = $driver;
+
+
+            // Registrations
+            $data = $this->getDataFromUrl("https://api.pitskill.io/api/events/upcomingRegistrations?id=$id");
+            if(array_key_exists('payload', $data) && $data['payload'] !== null){
+                
+                foreach($data['payload'] as $eventIndex => $event){
+                    $registration['Driver'] = $driver['Driver Name'];
+                    foreach($this->registrationColumns as $column => $path){
+                        if(!$path) continue;
+                        $path = 'payload.'.$eventIndex.'.'.$path;
+                        try {
+                            $registration[$column] = $this->transformValue($column, $this->getValue($data, $path));
+                        } catch (\Throwable $th) {
+                            dd($th, $this->getValue($data, $path));
+                        }
+                    }
+                    $this->registrations[] = $registration;
+                }
+            }
         }
     }
 
-    private function transformValue(string $column, string $value): string
+    private function transformValue(string $column, string|array $value): string
     {
         switch ($column) {
             case 'Image':
                 return "<img src='" . htmlspecialchars($value) . "' alt='Image' />";
+
+            case 'Broadcasted':
+                $out = [];
+                foreach ($value as $broadcast) {
+                    $out[] = "<a href='".$value['broadcast_url']."'>".$value['broadcast_name']."</a>";
+                }
+                return implode("<br>", $out);
 
             case 'Broadcasted':
                 return is_array($value) && count($value) > 0 ? 'Yes' : 'No';
@@ -83,7 +111,7 @@ class PitskillData
     private function transformDate($data, $format)
     {
         try {
-            return Carbon\Carbon::parse($value)->format($format);
+            return Carbon\Carbon::parse($data)->format($format);
         } catch (\Throwable $th) {
             return 'N/A';
         }
@@ -93,11 +121,6 @@ class PitskillData
     private function getDataFromUrl($url)
     {
         return json_decode(file_get_contents($url), true);
-    }
-
-    private function getColumns()
-    {
-        return array_keys($this->columns);
     }
 
     private function getValue($data, $path)
@@ -120,11 +143,17 @@ class PitskillData
         $twig = new Environment($loader);
 
         $data = [
-            'driver' => [
+            'drivers' => [
                 'columns' => array_keys($this->driverColumns),
                 'data' => $this->drivers,
             ],
+            'registrations' => [
+                'columns' => array_keys($this->registrationColumns),
+                'data' => $this->registrations,
+            ],
         ];
+
+        // dd($data);
 
         echo $twig->render('pitskill.twig', $data);
     }

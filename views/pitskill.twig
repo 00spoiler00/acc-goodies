@@ -10,28 +10,50 @@
     <div class="container mx-auto px-4 mt-5">
         <h1 class="text-center text-3xl font-bold mb-4">Pitskill Current Standings</h1>
             
-            <!-- Drivers -->
-            <table class="min-w-full bg-white border border-gray-300">
-                <thead class="bg-gray-800 text-white">
-                    <tr>
-                        {% for column in driver.columns %}
-                            {{ column }}
-                            <th class="py-2 px-4 border-b whitespace-nowrap">{{ column }}</th>
+        <!-- Drivers -->
+        <table class="min-w-full bg-white border border-gray-300">
+            <thead class="bg-gray-800 text-white">
+                <tr>
+                    {% for column in drivers.columns %}
+                        <th class="py-2 px-4 border-b whitespace-nowrap">{{ column }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for driver in drivers.data %}
+                    <tr class="hover:bg-gray-100">
+                        {% for column in drivers.columns %}
+                            <td class="py-2 px-4 border-b text-center whitespace-nowrap">
+                            {{ driver[column]|raw }}
+                            </td>
                         {% endfor %}
                     </tr>
-                </thead>
-                <tbody>
-                    {% for d in driver.data %}
-                        <tr class="hover:bg-gray-100">
-                            {% for column in driver.columns %}
-                                <td class="py-2 px-4 border-b text-center whitespace-nowrap">
-                                {{ d[column]|raw }}
-                                </td>
-                            {% endfor %}
-                        </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h1 class="text-center text-3xl font-bold mb-4">Pitskill User Registrations</h1>
+        <!-- Registrations -->
+        <table class="min-w-full bg-white border border-gray-300">
+            <thead class="bg-gray-800 text-white">
+                <tr>
+                    {% for column in registrations.columns %}
+                        <th class="py-2 px-4 border-b whitespace-nowrap">{{ column }}</th>
                     {% endfor %}
-                </tbody>
-            </table>
+                </tr>
+            </thead>
+            <tbody>
+                {% for registration in registrations.data %}
+                    <tr class="hover:bg-gray-100">
+                        {% for column in registrations.columns %}
+                            <td class="py-2 px-4 border-b text-center whitespace-nowrap">
+                            {{ registration[column]|raw }}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </body>
 </html>
