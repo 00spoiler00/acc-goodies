@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Race Fuel Calculator</title>
+<script>
+function calculateRace() {
+    // Get values from the form
+    var fuelPerLap = parseFloat(document.getElementById('fuelPerLap').value);
+    // Convert race time to minutes as it's input in minutes
+    var raceTime = parseFloat(document.getElementById('raceTime').value) || 25;
+    // Convert average lap time to minutes (input is in seconds)
+    var averageLapTime = parseFloat(document.getElementById('averageLapTime').value) / 60;
+    var fuelMargin = parseFloat(document.getElementById('fuelMargin').value) || 3;
+
+    // Calculate complete laps
+    var completeLaps = Math.floor(raceTime / averageLapTime);
+
+    // Calculate fuel needed without margin and with margin
+    var fuelNeeded = completeLaps * fuelPerLap;
+    var fuelNeededWithMargin = fuelNeeded + fuelMargin;
+
+    // Display results
+    document.getElementById('resultLaps').innerText = 'Complete laps: ' + completeLaps;
+    document.getElementById('resultFuel').innerText = 'Fuel needed without margin: ' + fuelNeeded.toFixed(2) + ' liters';
+    document.getElementById('resultFuelMargin').innerText = 'Fuel needed with margin: ' + fuelNeededWithMargin.toFixed(2) + ' liters';
+}
+</script>
+</head>
+<body>
+
+<h2>Race Fuel Calculator</h2>
+
+<form onsubmit="event.preventDefault(); calculateRace();">
+    <label for="fuelPerLap">Fuel per lap (liters):</label>
+    <input type="number" id="fuelPerLap" required step="any"><br><br>
+
+    <label for="raceTime">Race time (minutes):</label>
+    <input type="number" id="raceTime" placeholder="25" step="any"><br><br>
+
+    <label for="averageLapTime">Average lap time (seconds):</label>
+    <input type="number" id="averageLapTime" required step="any"><br><br>
+
+    <label for="fuelMargin">Fuel margin (liters):</label>
+    <input type="number" id="fuelMargin" placeholder="3" step="any"><br><br>
+
+    <button type="submit">Calculate</button>
+</form>
+
+<div id="results">
+    <p id="resultLaps"></p>
+    <p id="resultFuel"></p>
+    <p id="resultFuelMargin"></p>
+</div>
+
+</body>
+</html>
