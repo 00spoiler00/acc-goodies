@@ -36,7 +36,7 @@ class PitskillDataFetcher
         'Broadcasted' => 'broadcasters'
     ];
 
-    private function fetchData()
+    private function fetchData() : void
     {       
         foreach ($this->ids as $id) {
             // Driver
@@ -62,7 +62,7 @@ class PitskillDataFetcher
         }
     }
 
-    private function sortData()
+    private function sortData() : void
     {
         usort($this->drivers, function($a, $b) {
             if ($a['PitSkill'] == $b['PitSkill']) {
@@ -112,7 +112,7 @@ class PitskillDataFetcher
         }
     }
 
-    private function transformDate($data, $format)
+    private function transformDate(string $data, string $format)
     {
         try {
             return Carbon::parse($data)
@@ -123,12 +123,12 @@ class PitskillDataFetcher
         }
     }
     
-    private function getDataFromUrl($url)
+    private function getDataFromUrl(string $url) : array
     {
         return json_decode(file_get_contents($url), true);
     }
 
-    private function getValue($data, $path)
+    private function getValue(array $data, string $path)
     {
         $keys = explode('.', $path);
         foreach ($keys as $key) {
@@ -140,7 +140,7 @@ class PitskillDataFetcher
         return $data;
     }
 
-    public function saveData()
+    public function saveData() : void
     {
         $this->fetchData();
         $this->sortData();

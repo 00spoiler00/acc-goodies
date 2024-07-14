@@ -2,7 +2,6 @@
 
 opcache_reset();
 
-
 require 'vendor/autoload.php';
 
 use Twig\Environment;
@@ -11,7 +10,7 @@ use Carbon\Carbon;
 
 class PitskillDataRenderer
 {
-    public function render()
+    public function render() : void
     {
         $data = json_decode(file_get_contents('data.json'), true);
         $loader = new FilesystemLoader(__DIR__ . '/views');
