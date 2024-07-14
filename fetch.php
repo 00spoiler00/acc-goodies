@@ -115,12 +115,14 @@ class PitskillDataFetcher
     private function transformDate($data, $format)
     {
         try {
-            return Carbon::parse($data)->format($format);
+            return Carbon::parse($data)
+                         ->setTimezone('Europe/Madrid')
+                         ->format($format);
         } catch (\Throwable $th) {
             return 'N/A';
         }
     }
-
+    
     private function getDataFromUrl($url)
     {
         return json_decode(file_get_contents($url), true);

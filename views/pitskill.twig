@@ -1,59 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pitskill Current Standings</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body class="bg-gray-100">
-    <div class="container mx-auto px-4 mt-5">
-        <h1 class="text-center text-3xl font-bold mb-4">Pitskill Current Standings</h1>
-            
-        <!-- Drivers -->
-<table class="min-w-full bg-white border border-gray-300 mx-auto">
-            <thead class="bg-gray-800 text-white">
-                <tr>
-                    {% for column in drivers.columns %}
-                        <th class="py-2 px-4 border-b whitespace-nowrap">{{ column }}</th>
-                    {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for driver in drivers.data %}
-                    <tr class="hover:bg-gray-100">
-                        {% for column in drivers.columns %}
-                            <td class="py-2 px-4 border-b text-center whitespace-nowrap">
-                            {{ driver[column]|raw }}
-                            </td>
-                        {% endfor %}
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Pitskill Current Standings</title>
+		<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+	</head>
 
-        <h1 class="text-center text-3xl font-bold mb-4">Pitskill User Registrations</h1>
-        <!-- Registrations -->
-<table class="min-w-full bg-white border border-gray-300 mx-auto">
-            <thead class="bg-gray-800 text-white">
-                <tr>
-                    {% for column in registrations.columns %}
-                        <th class="py-2 px-4 border-b whitespace-nowrap">{{ column }}</th>
-                    {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for registration in registrations.data %}
-                    <tr class="hover:bg-gray-100">
-                        {% for column in registrations.columns %}
-                            <td class="py-2 px-4 border-b text-center whitespace-nowrap">
-                            {{ registration[column]|raw }}
-                            </td>
-                        {% endfor %}
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</body>
+	<body class="bg-gray-100">
+		<div class="px-4 mt-5">
+
+			<p>
+				Last updated:
+				{{ last_update }}
+			</p>
+
+			<h1 class="text-center text-3xl font-bold mb-4">Pitskill Current Standings</h1>
+
+			<!-- Drivers -->
+			<table class="min-w-full bg-white border border-gray-300 mx-auto">
+				<thead class="bg-gray-800 text-white">
+					<tr>
+						{% for column in drivers.columns %}
+							<th class="py-2 px-4 border-b whitespace-nowrap">{{ column }}</th>
+						{% endfor %}
+					</tr>
+				</thead>
+				<tbody>
+					{% for driver in drivers.data %}
+						<tr class="hover:bg-gray-100">
+							{% for column in drivers.columns %}
+								<td class="py-2 px-4 border-b text-center whitespace-nowrap">
+									{{ driver[column]|raw }}
+								</td>
+							{% endfor %}
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+
+			<h1 class="text-center text-3xl font-bold mb-4">Pitskill User Registrations</h1>
+			<!-- Registrations -->
+			<table class="min-w-full bg-white border border-gray-300 mx-auto">
+				<thead class="bg-gray-800 text-white">
+					<tr>
+						{% for column in registrations.columns %}
+							<th class="py-2 px-4 border-b whitespace-nowrap">{{ column }}</th>
+						{% endfor %}
+					</tr>
+				</thead>
+				<tbody>
+					{% for registration in registrations.data %}
+						<tr class="hover:bg-gray-100">
+							{% for column in registrations.columns %}
+								<td class="py-2 px-4 border-b text-center whitespace-nowrap">
+									{{ registration[column]|raw }}
+								</td>
+							{% endfor %}
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</body>
 </html>
