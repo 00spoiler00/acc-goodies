@@ -1,104 +1,135 @@
 <?php
 
-include './vendor/autoload.php';
+require 'vendor/autoload.php';
 
-// Función para obtener datos de una URL
-function getDataFromUrl($url) {
-    return json_decode(file_get_contents($url), true);
-}
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
 
-// IDs de ejemplo
-$ids = [17425];
-
-// Obtener y combinar los datos para cada ID
-foreach ($ids as $id) {
-    $datas[] = [
-        'driverInfo' => getDataFromUrl("https://api.pitskill.io/api/pitskill/getdriverinfo?id=$id"),
-        'upcomingRegistrations' => getDataFromUrl("https://api.pitskill.io/api/events/upcomingRegistrations?id=$id"),
+class PitskillData
+{
+    private $ids = [11993,1422,9318,17425,15071,17011,14448,14233,15477,16957,15087,15713,17028,15095,17918,18028,17558];
+    // private $ids = [17558];
+    private $rawData = [];
+    
+    private $driverColumns = [
+        'Image' => 'driverInfo.payload.sigma_user_data.discord_avatar',
+        'Driver Name' => 'driverInfo.payload.tpc_driver_data.name',
+        'Nickname' => 'driverInfo.payload.sigma_user_data.profile_data.nickname',
+        'PitRep' => 'driverInfo.payload.tpc_driver_data.currentPitRep',
+        'PitSkill' => 'driverInfo.payload.tpc_driver_data.currentPitSkill',
+        'Daily Races' => 'driverInfo.payload.tpc_driver_data.daily_race_count',
+        'Licence' => 'driverInfo.payload.tpc_driver_data.licence_class',
+        'Last Race' => 'driverInfo.payload.tpc_stats.lastRaceDate',
+        'Signup Date' => 'driverInfo.payload.sigma_user_data.signupDate',
+        'VIP Level' => 'driverInfo.payload.sigma_user_data.vip_level',
     ];
-}
 
-// Definir la estructura de los datos
-$columns = [
-    // 'Image' => 'driverInfo.payload',
-    'Image' => 'driverInfo.payload.sigma_user_data.discord_avatar',
-    'Driver Name' => 'driverInfo.payload.tpc_driver_data.name',
-    'Nickname' => 'driverInfo.payload.sigma_user_data.profile_data.nickname',
-    'Current Pit Rep' => 'driverInfo.payload.tpc_driver_data.currentPitRep',
-    'Current Pit Skill' => 'driverInfo.payload.tpc_driver_data.currentPitSkill',
-    'Daily Race Count' => 'driverInfo.payload.tpc_driver_data.daily_race_count',
-    'Licence Class' => 'driverInfo.payload.tpc_driver_data.licence_class',
-    'Last Race Date' => 'driverInfo.payload.tpc_stats.lastRaceDate',
-    'Signup Date' => 'driverInfo.payload.sigma_user_data.signupDate',
-    'VIP Level' => 'driverInfo.payload.sigma_user_data.vip_level',
-    'Upcoming Event Name' => 'upcomingRegistrations.payload.0.event_name',
-    'Event Start Date' => 'upcomingRegistrations.payload.0.start_date',
-    'Server' => 'upcomingRegistrations.payload.0.event_registrations.0.vehicle_registration.server.server_name',
-    'Server SoF' => 'upcomingRegistrations.payload.0.event_registrations.0.vehicle_registration.server.server_strength_of_field',
-    'Server Splits' => 'upcomingRegistrations.payload.0.event_registrations.0.vehicle_registration.server.server_split_index',
-    'Server Strength of Field' => 'upcomingRegistrations.payload.0.event_registrations.0.car.name',
-    'Car' => 'upcomingRegistrations.payload.0.event_registrations.0.car.name',
-    'Track' => 'upcomingRegistrations.payload.0.track.track_name_long',
-    'Registration Count' => 'upcomingRegistrations.payload.0.registration_count',
-    'Broadcasters' => 'upcomingRegistrations.payload.0.broadcasters'
-];
+    private $registrationColumns = [
+        'Upcoming Event' => 'upcomingRegistrations.payload.0.event_name',
+        'On Date' => 'upcomingRegistrations.payload.0.start_date',
+        'Server' => 'upcomingRegistrations.payload.0.event_registrations.0.vehicle_registration.server.server_name',
+        'Server SoF' => 'upcomingRegistrations.payload.0.event_registrations.0.vehicle_registration.server.server_strength_of_field',
+        'Server Splits' => 'upcomingRegistrations.payload.0.event_registrations.0.vehicle_registration.server.server_split_index',
+        'Car' => 'upcomingRegistrations.payload.0.event_registrations.0.car.name',
+        'Track' => 'upcomingRegistrations.payload.0.track.track_name_long',
+        'Registration' => 'upcomingRegistrations.payload.0.registration_count',
+        'Broadcasted' => 'upcomingRegistrations.payload.0.broadcasters'
+    ];
 
-function getValue($data, $path) {
-    // dd($data);
-    $keys = explode('.', $path);
-    foreach ($keys as $key) {
-        if (!isset($data[$key])) {
+    private function fetchData()
+    {
+        foreach ($this->ids as $id) {
+            $this->rawData[] = [
+                'driver' => $this->getDataFromUrl("https://api.pitskill.io/api/pitskill/getdriverinfo?id=$id"),
+                'registrations' => $this->getDataFromUrl("https://api.pitskill.io/api/events/upcomingRegistrations?id=$id"),
+            ];
+        }
+    }
+
+    private function transformData()
+    {
+        foreach ($this->rawData as $rawData) {
+            $driverTransformedData = [];
+            foreach ($this->columns as $column => $path) {
+                $value = $this->getValue($rawData, $path);
+                switch ($column) {
+                    case 'Image':
+                        $value = "<img src='" . htmlspecialchars($value) . "' alt='Image' />";
+
+                    case 'Broadcasted':
+                        $value = is_array($value) && count($value) > 0 ? 'Yes' : 'No';
+
+                    case 'Licence':
+                        $map = [
+                            'A Class' => '<span class="bg-blue text-white">A Class</span>',
+                            'B Class' => '<span class="bg-yellow text-white">A Class</span>',
+                        ];
+                        $value = array_key_exists($value, $map) ? $map[$value] : $value;
+
+                    case 'Signup Date':
+                    case 'On Date':
+                        $value = $this->transformDate($value, 'd/m/y H:i');
+                    
+                    case 'Last Race':
+                        $value = $this->transformDate($value, 'd/m/y');
+                    
+                    // case 'Server SoF':
+                    //     $value = round($value, 1);
+                        
+                    default:
+                }
+                $driverTransformedData[$column] = $value;
+            }
+            $this->driversTransformedData[] = $driverTransformedData;
+        }
+    }
+
+    private function transformDate($data, $format)
+    {
+        try {
+            return Carbon\Carbon::parse($value)->format($format);
+        } catch (\Throwable $th) {
             return 'N/A';
         }
-        $data = $data[$key];
     }
-    return $data;
+
+
+    private function getDataFromUrl($url)
+    {
+        return json_decode(file_get_contents($url), true);
+    }
+
+    private function getColumns()
+    {
+        return array_keys($this->columns);
+    }
+
+    private function getValue($data, $path)
+    {
+        $keys = explode('.', $path);
+        foreach ($keys as $key) {
+            if (!isset($data[$key])) {
+                return 'N/A';
+            }
+            $data = $data[$key];
+        }
+        return $data;
+    }
+
+    public function render()
+    {
+        $this->fetchData();
+        $this->transformData();
+
+        $loader = new FilesystemLoader(__DIR__ . '/views');
+        $twig = new Environment($loader);
+
+        echo $twig->render('pitskill.twig', [
+            'columns' => $this->getColumns(),
+            'driversData' => $this->driversTransformedData,
+        ]);
+    }
 }
 
+(new PitskillData())->render();
 
-?>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pitskill Current Standings</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <div class="container mt-5">
-        <h1 class="text-center mb-4">Pitskill Current Standings</h1>
-        <table class="table table-bordered">
-            <thead class="thead-dark">
-                <tr>
-                    <?php foreach (array_keys($columns) as $column): ?>
-                        <th><?php echo htmlspecialchars($column); ?></th>
-                    <?php endforeach; ?>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($datas as $data): ?>
-                    <tr>
-                        <?php foreach ($columns as $column => $path): ?>
-                            <?php 
-                                $value = getValue($data, $path);
-                                if ($column == 'Image') {
-                                    $value = "<img src='" . htmlspecialchars($value) . "' alt='Image' />";
-                                } elseif ($column == 'Broadcasters') {
-                                    $value = is_array($value) && count($value) > 0 ? 'Yes' : 'No';
-                                }
-                            ?>
-                            <td><?php echo $value; ?></td>
-
-                        <?php endforeach; ?>
-
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
-
-
-</body>
-</html>
