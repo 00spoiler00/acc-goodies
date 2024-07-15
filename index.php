@@ -18,8 +18,8 @@ class PitskillDataRenderer
 
         $lastUpdate = filemtime('data.json');
         $lastUpdate = Carbon::createFromTimestamp($lastUpdate, 'UTC')
-                                  ->setTimezone('Europe/Madrid')
-                                  ->toDateTimeString();
+            ->setTimezone('Europe/Madrid')
+            ->toDateTimeString();
 
         // Add the modification date to the data array
         $data['last_update'] = $lastUpdate;
