@@ -27,11 +27,13 @@ class PitskillDataFetcher
         'Driver' => null,
         'On Date' => 'start_date',
         'Upcoming Event' => 'event_name',
+        'Enroll Link' => 'event_id',
         'Server' => 'event_registrations.0.vehicle_registration.server.server_name',
         'Server SoF' => 'event_registrations.0.vehicle_registration.server.server_strength_of_field',
         'Server Splits' => 'event_registrations.0.vehicle_registration.server.server_split_index',
         'Car' => 'event_registrations.0.car.name',
         'Track' => 'track.track_name_long',
+        'Circuit Image' => 'track.thumbnail',
         'Registration' => 'registration_count',
         'Broadcasted' => 'broadcasters'
     ];
@@ -80,18 +82,25 @@ class PitskillDataFetcher
 
     }
 
+    // TODO: Move this to frontend parsing and flow control
     private function transformValue(string $column, string|array $value): string
     {
         switch ($column) {
-            case 'Image':
-                return "<img src='" . htmlspecialchars($value) . "' alt='Image' class='w-16 h-16 object-cover' />";
+                
+            case 'Circuit Image':
+                return "https://cdn.pitskill.io/public/TrackPhoto-" . $value;
+        
+            case 'Enroll Link':
+                return "https://pitskill.io/event/".$value;
+            
             case 'Broadcasted':
                 $out = [];
                 foreach ($value as $broadcast) {
                     $out[] = "<a href='" . $broadcast['broadcast_url'] . "'>" . $broadcast['broadcast_name'] . "</a>";
                 }
                 return implode("<br>", $out);
-                case 'Licence':
+            
+            case 'Licence':
                     $map = [
                         'S Class' => '<span class="bg-green-500 text-white rounded-full px-3 py-1">S Class</span>',
                         'A Class' => '<span class="bg-red-500 text-white rounded-full px-3 py-1">A Class</span>',

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vuetify Inline Example</title>
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.5.10/dist/vuetify.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div id="app">
+        <v-app>
+            <v-main>
+                <v-app-bar app primary class="elevation-4">
+                    <v-toolbar-title secondary>PitSkill A Tot Drap</v-toolbar-title>
+                </v-app-bar>
+                <v-tabs v-model="tab">
+                    <v-tab>
+                        Registres a curses
+                    </v-tab>
+                    <v-tab>
+                        Ranking de pilots
+                    </v-tab>
+
+                    <v-tab-item class="mx-4">
+                        <v-card flat>
+                            <v-card-title>
+                                <v-text-field v-model="registrationsSearch" label="Cerca registres" append-icon="mdi-magnify" single-line hide-details></v-text-field>
+                            </v-card-title>
+                            <v-data-table :headers="registrationHeaders" :items="filteredRegistrations" class="elevation-4 mt-5" disable-pagination :hide-default-footer="true">
+                                <template v-slot:top>
+                                    <v-toolbar flat>
+                                        <v-toolbar-title>Registres</v-toolbar-title>
+                                    </v-toolbar>
+                                </template>
+                                <template v-slot:item="props">
+                                    <tr :class="getRegistrationRowClass(props.item['Upcoming Event'])">
+                                        <td>{{ props.item.Driver }}</td>
+                                        <td>{{ props.item['On Date'] }}</td>
+                                        <td>
+                                            <v-tooltip bottom>
+                                                <template v-slot:activator="{ on, attrs }">
+                                                    <span v-bind="attrs" v-on="on">{{ props.item['Upcoming Event'] }}</span>
+                                                </template>
+                                                <span>{{ props.item.Server }}</span>
+                                            </v-tooltip>
+                                        </td>
+                                        <td>
+                                            <v-btn
+                                                :href="props.item['Enroll Link']"
+                                                target="_blank"
+                                                icon>
+                                                <v-icon>mdi-open-in-new</v-icon>
+                                            </v-btn>
+                                        </td>
+                                        <td>{{ props.item['Server SoF'] }}</td>
+                                        <td>{{ props.item['Server Splits'] }}</td>
+                                        <td>{{ props.item.Car }}</td>
+                                        <td>
+                                            <v-menu open-on-hover>
+                                                <template v-slot:activator="{ on, attrs }">
+                                                    <div v-bind="attrs" v-on="on">{{ props.item.Track }}</div>
+                                                </template>
+                                                <v-card>
+                                                    <v-img
+                                                        :src="props.item['Circuit Image']"
+                                                        max-width="300"
+                                                        class="big-img"></v-img>
+                                                </v-card>
+                                            </v-menu>
+                                        </td>
+                                        <td>{{ props.item.Registration }}</td>
+                                        <td v-html="props.item.Broadcasted"></td>
+                                    </tr>
+                                </template>
+                            </v-data-table>
+                        </v-card>
+                    </v-tab-item>
+
+                    <v-tab-item class="mx-4">
+                        <v-card flat>
+                            <v-card-title>
+                                <v-text-field v-model="driversSearch" label="Cerca pilots" append-icon="mdi-magnify" single-line hide-details></v-text-field>
+                            </v-card-title>
+                            <v-data-table :headers="headers" :items="filteredDrivers" class="elevation-4" disable-pagination :hide-default-footer="true">
+                                <template v-slot:top>
+                                    <v-toolbar flat>
+                                        <v-toolbar-title>Pilots</v-toolbar-title>
+                                    </v-toolbar>
+                                </template>
+                                <template v-slot:item="props">
+                                    <tr>
+                                        <td>
+                                            <v-avatar size="64">
+                                                <v-img :src='props.item.Image' />
+                                            </v-avatar>
+                                        </td>
+                                        <td>{{ props.item['Driver Name'] }}</td>
+                                        <td>{{ props.item.Nickname }}</td>
+                                        <td v-html="props.item.Licence"></td>
+                                        <td>{{ props.item.PitRep }}</td>
+                                        <td>{{ props.item.PitSkill }}</td>
+                                        <!-- <td>{{ props.item['Daily Races'] }}</td>
+                                        <td>{{ props.item['Last Race'] }}</td> -->
+                                    </tr>
+                                </template>
+                            </v-data-table>
+                        </v-card>
+                    </v-tab-item>
+                </v-tabs>
+            </v-main>
+        </v-app>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.5.10/dist/vuetify.min.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            vuetify: new Vuetify(),
+            data: () => ({
+                tab: null,
+                driversSearch: '',
+                registrationsSearch: '',
+                headers: [
+                    { text: 'Image', align: 'start', sortable: false, value: 'Image' },
+                    { text: 'Driver Name', value: 'Driver Name' },
+                    { text: 'Nickname', value: 'Nickname' },
+                    { text: 'Licence', value: 'Licence' },
+                    { text: 'PitRep', value: 'PitRep' },
+                    { text: 'PitSkill', value: 'PitSkill' },
+                    // { text: 'Daily Races', value: 'Daily Races' },
+                    // { text: 'Last Race', value: 'Last Race' },
+                ],
+                registrationHeaders: [
+                    { text: 'Driver', value: 'Driver' },
+                    { text: 'On Date', value: 'On Date' },
+                    { text: 'Upcoming Event', value: 'Upcoming Event' },
+                    { text: 'Enroll', value: 'Enroll Link' },
+                    // { text: 'Server', value: 'Server' },
+                    { text: 'Server SoF', value: 'Server SoF' },
+                    { text: 'Server Splits', value: 'Server Splits' },
+                    { text: 'Car', value: 'Car' },
+                    { text: 'Track', value: 'Track' },
+                    { text: 'Circuit Image', value: 'Circuit Image' },
+                    { text: 'Registration', value: 'Registration' },
+                    { text: 'Broadcasted', value: 'Broadcasted' },
+                ],
+                drivers: [],
+                registrations: [],
+            }),
+            computed: {
+                filteredDrivers() {
+                    return this.drivers.filter(driver => {
+                        const searchTerm = this.driversSearch.toLowerCase();
+                        return Object.values(driver).some(value =>
+                            value.toString().toLowerCase().includes(searchTerm)
+                        );
+                    });
+                },
+                filteredRegistrations() {
+                    return this.registrations.filter(registration => {
+                        const searchTerm = this.registrationsSearch.toLowerCase();
+                        return Object.values(registration).some(value =>
+                            value.toString().toLowerCase().includes(searchTerm)
+                        );
+                    });
+                }
+            },
+            created() {
+                this.fetchData();
+            },
+            methods: {
+                fetchData() {
+                    fetch('./data.json')
+                        .then(response => response.json())
+                        .then(data => {
+                            this.drivers = data.drivers.data;
+                            this.registrations = data.registrations.data;
+                        })
+                        .catch(error => console.error('Error fetching data:', error));
+                },
+                getRegistrationRowClass(upcomingEvent) {
+                    const eventCount = this.registrations.filter(reg => reg['Upcoming Event'] === upcomingEvent).length;
+                    const intensity = Math.min(255, 100 + eventCount * 10);
+                    return {
+                        'bg-red-100': intensity <= 150,
+                        'bg-red-200': intensity > 150 && intensity <= 200,
+                        'bg-red-300': intensity > 200 && intensity <= 255,
+                    };
+                }
+            },
+        });
+    </script>
+</body>
+
+</html>
