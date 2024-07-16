@@ -9,7 +9,8 @@ class PitskillDataFetcher
     private $ids = [11993, 1422, 9318, 17425, 15071, 17011, 14448, 14233, 15477, 16957, 15087, 15713, 17028, 15095, 17918, 18028, 17558, 18098, 15484];
     private $drivers = [];
     private $registrations = [];
-    
+    private $stats = [];
+
     private $driverColumns = [
         'Driver Id' => null,
         'Image' => 'payload.sigma_user_data.discord_avatar',
@@ -23,7 +24,7 @@ class PitskillDataFetcher
         // 'VIP Level' => 'payload.sigma_user_data.vip_level',
         // 'Signup Date' => 'payload.sigma_user_data.signupDate',
     ];
-    
+
     private $registrationColumns = [
         'Driver' => null,
         'On Date' => 'start_date',
@@ -41,9 +42,10 @@ class PitskillDataFetcher
 
     private function fetchData() : void
     {       
+        $this->loadStats();
+
         foreach ($this->ids as $id) {
 
-            
             // Driver
             $data = $this->getDataFromUrl("https://api.pitskill.io/api/pitskill/getdriverinfo?id=$id");
 
@@ -55,6 +57,7 @@ class PitskillDataFetcher
                 if (!$path) continue;
                 $driver[$column] = $this->transformValue($column, $this->getValue($data, $path));
             }
+            $driver['Stats'] = $this->stats[$id] ?? [];
             $this->drivers[] = $driver;
 
             // Registrations
@@ -73,11 +76,40 @@ class PitskillDataFetcher
         }
     }
 
-    private function createStats() : void
-    {        
-        return;
+    private function createStats(int $id, array $data) : void
+    {
+        $currentPitRep = $this->getValue($data, 'payload.tpc_driver_data.currentPitRep');
+        $currentPitSkill = $this->getValue($data, 'payload.tpc_driver_data.currentPitSkill');
+
+        if (!isset($this->stats[$id])) {
+            $this->stats[$id] = ['PitRep' => [], 'PitSkill' => []];
+        }
+
+        $lastPitRep = end($this->stats[$id]['PitRep']);
+        $lastPitSkill = end($this->stats[$id]['PitSkill']);
+
+        if ($lastPitRep !== $currentPitRep) {
+            $this->stats[$id]['PitRep'][] = $currentPitRep;
+        }
+
+        if ($lastPitSkill !== $currentPitSkill) {
+            $this->stats[$id]['PitSkill'][] = $currentPitSkill;
+        }
+
+        $this->saveStats();
     }
 
+    private function loadStats() : void
+    {
+        if (file_exists('stats.json')) {
+            $this->stats = json_decode(file_get_contents('stats.json'), true);
+        }
+    }
+
+    private function saveStats() : void
+    {
+        file_put_contents('stats.json', json_encode($this->stats));
+    }
 
     private function sortData() : void
     {
@@ -88,13 +120,12 @@ class PitskillDataFetcher
             return $b['PitSkill'] <=> $a['PitSkill'];
         });
         
-        // Sort Registrations by 'OnDate'
+        // Sort Registrations by 'On Date'
         usort($this->registrations, function($a, $b) {
             $dateA = Carbon::createFromFormat('d/m/y H:i', $a['On Date']);
             $dateB = Carbon::createFromFormat('d/m/y H:i', $b['On Date']);
             return $dateA <=> $dateB;
         });
-
     }
 
     // TODO: Move this to frontend parsing and flow control
@@ -115,15 +146,6 @@ class PitskillDataFetcher
                 }
                 return implode("<br>", $out);
             
-            case 'Licence':
-                    $map = [
-                        'S Class' => '<span class="bg-green-500 text-white rounded-full px-3 py-1">S Class</span>',
-                        'A Class' => '<span class="bg-red-500 text-white rounded-full px-3 py-1">A Class</span>',
-                        'B Class' => '<span class="bg-blue-500 text-white rounded-full px-3 py-1">B Class</span>',
-                        'C Class' => '<span class="bg-purple-500 text-white rounded-full px-3 py-1">C Class</span>',
-                        'Rookie' => '<span class="bg-gray-500 text-white rounded-full px-3 py-1">Rookie</span>',
-                    ];
-                    return array_key_exists($value, $map) ? $map[$value] : $value;
             case 'Signup Date':
             case 'On Date':
             case 'Last Activity':

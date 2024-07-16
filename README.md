@@ -2,19 +2,28 @@
 
 ## TODO
 
-### Now
+### Current
 
-- Add lobby tracking
+- Add hovers for all available fields.
+- Stop transforming dates in BE and do it in FE
+. Remove all backend html and value transformation favoring fe interpretation
+- Allow copy server identifier
+- Create user statistics (locally track numerica)
 - Add last update
+- Remove value processing in backend
 - Add car picture
+- Add lobby tracking
 
 ### Next
 
 - Make a Laravel backend
-- Create user statistics
 
 
 ## ChangeLog
+
+### Unpublished
+
+- Fix license and remove unused columns
 
 ### V 0.1 Vuetified
 

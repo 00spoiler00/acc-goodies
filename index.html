@@ -103,12 +103,36 @@
                                                 {{ props.item['Driver Name'] }}
                                             </a>
                                         </td>
-                                        <td>{{ props.item.Nickname }}</td>
-                                        <td v-html="props.item.Licence"></td>
-                                        <td>{{ props.item.PitRep }}</td>
-                                        <td>{{ props.item.PitSkill }}</td>
-                                        <!-- <td>{{ props.item['Daily Races'] }}</td> -->
-                                        <td>{{ props.item['Last Activity'] }}</td>
+                                        <td>
+                                            <span :class="getLicenceClass(props.item.Licence)">{{props.item.Licence}}</span>
+                                        </td>
+                                        <td>
+                                            <v-menu open-on-hover>
+                                                <template v-slot:activator="{ on, attrs }">
+                                                    <span v-bind="attrs" v-on="on">{{ props.item.PitRep }}</span>
+                                                </template>
+                                                <v-card>
+                                                    <v-card-title>PitRep History</v-card-title>
+                                                    <v-card-text>
+                                                        <v-sparkline :value="props.item.Stats.PitRep" color="blue"></v-sparkline>
+                                                    </v-card-text>
+                                                </v-card>
+                                            </v-menu>
+                                        </td>
+                                        <td>
+                                            <v-menu open-on-hover>
+                                                <template v-slot:activator="{ on, attrs }">
+                                                    <span v-bind="attrs" v-on="on">{{ props.item.PitSkill }}</span>
+                                                </template>
+                                                <v-card>
+                                                    <v-card-title>PitSkill History</v-card-title>
+                                                    <v-card-text>
+                                                        <v-sparkline :value="props.item.Stats.PitSkill" color="red"></v-sparkline>
+                                                    </v-card-text>
+                                                </v-card>
+                                            </v-menu>
+                                        </td>
+                                        <td v-html="timeUntil(props.item['Last Activity'])"></td>
                                     </tr>
                                 </template>
                             </v-data-table>
@@ -124,7 +148,6 @@
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/min/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/locale/ca.js"></script>
 
-
     <script>
         moment.locale('ca');
 
@@ -138,11 +161,9 @@
                 headers: [
                     { text: 'Imatge', align: 'start', sortable: false, value: 'Image' },
                     { text: 'Nom del pilot', value: 'Driver Name' },
-                    { text: 'Àlies', value: 'Nickname' },
                     { text: 'Llicència', value: 'Licence' },
                     { text: 'PitRep', value: 'PitRep' },
                     { text: 'PitSkill', value: 'PitSkill' },
-                    // { text: 'Curses diàries', value: 'Daily Races' },
                     { text: 'Última activitat', value: 'Last Activity' },
                 ],
                 registrationHeaders: [
@@ -150,15 +171,14 @@
                     { text: 'Data', value: 'On Date' },
                     { text: 'Esdeveniment proper', value: 'Upcoming Event' },
                     { text: 'Inscripció', value: 'Enroll Link' },
-                    // { text: 'Servidor', value: 'Server' },
                     { text: 'Servidor SoF', value: 'Server SoF' },
                     { text: 'Divisions del servidor', value: 'Server Splits' },
                     { text: 'Cotxe', value: 'Car' },
                     { text: 'Circuit', value: 'Track' },
-                    // { text: 'Imatge del circuit', value: 'Circuit Image' },
                     { text: 'Inscrits', value: 'Registration' },
                     { text: 'Retransmissió', value: 'Broadcasted' },
-                ], drivers: [],
+                ],
+                drivers: [],
                 registrations: [],
             }),
             computed: {
@@ -192,6 +212,7 @@
                         })
                         .catch(error => console.error('Error fetching data:', error));
                 },
+
                 getRegistrationRowClass(upcomingEvent) {
                     const eventCount = this.registrations.filter(reg => reg['Upcoming Event'] === upcomingEvent).length;
                     const intensity = Math.min(255, 100 + eventCount * 10);
@@ -201,6 +222,19 @@
                         'bg-red-300': intensity > 200 && intensity <= 255,
                     };
                 },
+
+                getLicenceClass(license) {
+                    const licenseColorMap = {
+                        'S Class': 'bg-green-500',
+                        'A Class': 'bg-red-500',
+                        'B Class': 'bg-blue-500',
+                        'C Class': 'bg-purple-500',
+                        'Rookie': 'bg-gray-500',
+                    };
+
+                    return `text-white rounded-full whitespace-nowrap px-3 py-1 ${licenseColorMap[license] || 'bg-default'}`;
+                },
+
                 timeUntil(dateString) {
                     return dateString + ' <b>(' + moment(dateString, "DD/MM/YY HH:mm").fromNow() + ')</b>';
                 }
