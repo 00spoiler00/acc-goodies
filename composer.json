@@ -1,9 +1,8 @@
 {
-    "name": "marc/acc",
-    "description": "Helpers for pitskill and AssettoCorsa Competizione",
+    "name": "marc/pitskill",
+    "description": "PitSkill ranking and scheduled parser",
     "require": {
         "larapack/dd": "^1.1",
-        "twig/twig": "^3.0",
         "nesbot/carbon": "^3.6"
     },
     "autoload": {

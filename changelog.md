@@ -1,20 +1,4 @@
-# ATotDrap Team PitSkill status
-
-## TODO
-
-### Now
-
-- Add lobby tracking
-- Add last update
-- Add car picture
-
-### Next
-
-- Make a Laravel backend
-- Create user statistics
-
-
-## ChangeLog
+# ChangeLog
 
 ### V 0.1 Vuetified
 

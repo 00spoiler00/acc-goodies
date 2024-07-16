@@ -11,6 +11,7 @@ class PitskillDataFetcher
     private $registrations = [];
     
     private $driverColumns = [
+        'Driver Id' => null,
         'Image' => 'payload.sigma_user_data.discord_avatar',
         'Driver Name' => 'payload.tpc_driver_data.name',
         'Nickname' => 'payload.sigma_user_data.profile_data.nickname',
@@ -18,7 +19,7 @@ class PitskillDataFetcher
         'PitRep' => 'payload.tpc_driver_data.currentPitRep',
         'PitSkill' => 'payload.tpc_driver_data.currentPitSkill',
         'Daily Races' => 'payload.tpc_driver_data.daily_race_count',
-        'Last Race' => 'payload.tpc_stats.lastRaceDate',
+        'Last Activity' => 'payload.sigma_user_data.updated_at',
         // 'VIP Level' => 'payload.sigma_user_data.vip_level',
         // 'Signup Date' => 'payload.sigma_user_data.signupDate',
     ];
@@ -41,9 +42,17 @@ class PitskillDataFetcher
     private function fetchData() : void
     {       
         foreach ($this->ids as $id) {
+
+            
             // Driver
             $data = $this->getDataFromUrl("https://api.pitskill.io/api/pitskill/getdriverinfo?id=$id");
+
+            // Create statistics
+            $this->createStats($id, $data);
+
+            $driver['Driver Id'] = $id;
             foreach ($this->driverColumns as $column => $path) {
+                if (!$path) continue;
                 $driver[$column] = $this->transformValue($column, $this->getValue($data, $path));
             }
             $this->drivers[] = $driver;
@@ -63,6 +72,12 @@ class PitskillDataFetcher
             }
         }
     }
+
+    private function createStats() : void
+    {        
+        return;
+    }
+
 
     private function sortData() : void
     {
@@ -111,6 +126,7 @@ class PitskillDataFetcher
                     return array_key_exists($value, $map) ? $map[$value] : $value;
             case 'Signup Date':
             case 'On Date':
+            case 'Last Activity':
                 return $this->transformDate($value, 'd/m/y H:i');
             case 'Last Race':
                 return $this->transformDate($value, 'd/m/y');
@@ -155,6 +171,7 @@ class PitskillDataFetcher
         $this->sortData();
 
         $data = [
+            'last_update' => Carbon::now(),
             'drivers' => [
                 'columns' => array_keys($this->driverColumns),
                 'data' => $this->drivers,

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vuetify Inline Example</title>
+    <title>PitSkill A Tot Drap</title>
     <link href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/vuetify@2.5.10/dist/vuetify.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
@@ -39,7 +39,7 @@
                                 <template v-slot:item="props">
                                     <tr :class="getRegistrationRowClass(props.item['Upcoming Event'])">
                                         <td>{{ props.item.Driver }}</td>
-                                        <td>{{ props.item['On Date'] }}</td>
+                                        <td v-html="timeUntil(props.item['On Date'])"></td>
                                         <td>
                                             <v-tooltip bottom>
                                                 <template v-slot:activator="{ on, attrs }">
@@ -67,7 +67,7 @@
                                                 <v-card>
                                                     <v-img
                                                         :src="props.item['Circuit Image']"
-                                                        max-width="300"
+                                                        max-width="600"
                                                         class="big-img"></v-img>
                                                 </v-card>
                                             </v-menu>
@@ -98,13 +98,17 @@
                                                 <v-img :src='props.item.Image' />
                                             </v-avatar>
                                         </td>
-                                        <td>{{ props.item['Driver Name'] }}</td>
+                                        <td>
+                                            <a :href="'https://pitskill.io/driver-license/'+ props.item['Driver Id']" target="_blank">
+                                                {{ props.item['Driver Name'] }}
+                                            </a>
+                                        </td>
                                         <td>{{ props.item.Nickname }}</td>
                                         <td v-html="props.item.Licence"></td>
                                         <td>{{ props.item.PitRep }}</td>
                                         <td>{{ props.item.PitSkill }}</td>
-                                        <!-- <td>{{ props.item['Daily Races'] }}</td>
-                                        <td>{{ props.item['Last Race'] }}</td> -->
+                                        <!-- <td>{{ props.item['Daily Races'] }}</td> -->
+                                        <td>{{ props.item['Last Activity'] }}</td>
                                     </tr>
                                 </template>
                             </v-data-table>
@@ -117,7 +121,13 @@
 
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vuetify@2.5.10/dist/vuetify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/min/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/locale/ca.js"></script>
+
+
     <script>
+        moment.locale('ca');
+
         new Vue({
             el: '#app',
             vuetify: new Vuetify(),
@@ -126,30 +136,29 @@
                 driversSearch: '',
                 registrationsSearch: '',
                 headers: [
-                    { text: 'Image', align: 'start', sortable: false, value: 'Image' },
-                    { text: 'Driver Name', value: 'Driver Name' },
-                    { text: 'Nickname', value: 'Nickname' },
-                    { text: 'Licence', value: 'Licence' },
+                    { text: 'Imatge', align: 'start', sortable: false, value: 'Image' },
+                    { text: 'Nom del pilot', value: 'Driver Name' },
+                    { text: 'Àlies', value: 'Nickname' },
+                    { text: 'Llicència', value: 'Licence' },
                     { text: 'PitRep', value: 'PitRep' },
                     { text: 'PitSkill', value: 'PitSkill' },
-                    // { text: 'Daily Races', value: 'Daily Races' },
-                    // { text: 'Last Race', value: 'Last Race' },
+                    // { text: 'Curses diàries', value: 'Daily Races' },
+                    { text: 'Última activitat', value: 'Last Activity' },
                 ],
                 registrationHeaders: [
-                    { text: 'Driver', value: 'Driver' },
-                    { text: 'On Date', value: 'On Date' },
-                    { text: 'Upcoming Event', value: 'Upcoming Event' },
-                    { text: 'Enroll', value: 'Enroll Link' },
-                    // { text: 'Server', value: 'Server' },
-                    { text: 'Server SoF', value: 'Server SoF' },
-                    { text: 'Server Splits', value: 'Server Splits' },
-                    { text: 'Car', value: 'Car' },
-                    { text: 'Track', value: 'Track' },
-                    { text: 'Circuit Image', value: 'Circuit Image' },
-                    { text: 'Registration', value: 'Registration' },
-                    { text: 'Broadcasted', value: 'Broadcasted' },
-                ],
-                drivers: [],
+                    { text: 'Pilot', value: 'Driver' },
+                    { text: 'Data', value: 'On Date' },
+                    { text: 'Esdeveniment proper', value: 'Upcoming Event' },
+                    { text: 'Inscripció', value: 'Enroll Link' },
+                    // { text: 'Servidor', value: 'Server' },
+                    { text: 'Servidor SoF', value: 'Server SoF' },
+                    { text: 'Divisions del servidor', value: 'Server Splits' },
+                    { text: 'Cotxe', value: 'Car' },
+                    { text: 'Circuit', value: 'Track' },
+                    // { text: 'Imatge del circuit', value: 'Circuit Image' },
+                    { text: 'Inscrits', value: 'Registration' },
+                    { text: 'Retransmissió', value: 'Broadcasted' },
+                ], drivers: [],
                 registrations: [],
             }),
             computed: {
@@ -191,6 +200,9 @@
                         'bg-red-200': intensity > 150 && intensity <= 200,
                         'bg-red-300': intensity > 200 && intensity <= 255,
                     };
+                },
+                timeUntil(dateString) {
+                    return dateString + ' <b>(' + moment(dateString, "DD/MM/YY HH:mm").fromNow() + ')</b>';
                 }
             },
         });
