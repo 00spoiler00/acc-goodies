@@ -16,6 +16,15 @@
             <v-main>
                 <v-app-bar app primary class="elevation-4">
                     <v-toolbar-title secondary>PitSkill A Tot Drap</v-toolbar-title>
+                    <v-spacer></v-spacer>
+                    <v-progress-circular
+                        :rotate="-90"
+                        :size="40"
+                        :width="4"
+                        :value="countdownValue"
+                        color="primary">
+                        {{ countdownTime }}
+                    </v-progress-circular>
                 </v-app-bar>
                 <v-tabs v-model="tab">
                     <v-tab>
@@ -114,7 +123,7 @@
                                                 <v-card>
                                                     <v-card-title>PitRep History</v-card-title>
                                                     <v-card-text>
-                                                        <v-sparkline :value="props.item.Stats.PitRep" color="blue"></v-sparkline>
+                                                        <v-sparkline auto-draw height="300" width="400" smooth :value="props.item.Stats.PitRep" color="blue"></v-sparkline>
                                                     </v-card-text>
                                                 </v-card>
                                             </v-menu>
@@ -127,7 +136,7 @@
                                                 <v-card>
                                                     <v-card-title>PitSkill History</v-card-title>
                                                     <v-card-text>
-                                                        <v-sparkline :value="props.item.Stats.PitSkill" color="red"></v-sparkline>
+                                                        <v-sparkline auto-draw height="300" width="400" smooth :value="props.item.Stats.PitSkill" color="red"></v-sparkline>
                                                     </v-card-text>
                                                 </v-card>
                                             </v-menu>
@@ -157,6 +166,8 @@
                 tab: null,
                 driversSearch: '',
                 registrationsSearch: '',
+                progress: 100,
+                interval: null,
                 headers: [
                     { text: 'Imatge', align: 'start', sortable: false, value: 'Image' },
                     { text: 'Nom del pilot', value: 'Driver Name' },
@@ -178,6 +189,8 @@
                 ],
                 drivers: [],
                 registrations: [],
+                countdownValue: 100,
+                countdownTime: 10,
             }),
             computed: {
                 filteredDrivers() {
@@ -199,6 +212,7 @@
             },
             created() {
                 this.fetchData();
+                this.startCountdown();
             },
             methods: {
                 fetchData() {
@@ -235,7 +249,22 @@
 
                 timeUntil(dateString) {
                     return dateString + ' <b>(' + moment(dateString, "DD/MM/YY HH:mm").fromNow() + ')</b>';
-                }
+                },
+
+                startCountdown() {
+                    setInterval(() => {
+                        if (this.countdownTime > 0) {
+                            this.countdownTime--;
+                            this.countdownValue = (this.countdownTime / 10) * 100;
+                        } else {
+                            this.countdownTime = 10;
+                            this.fetchData();
+                        }
+                    }, 1000);
+                },
+            },
+            beforeDestroy() {
+                clearInterval(this.interval);
             },
         });
     </script>

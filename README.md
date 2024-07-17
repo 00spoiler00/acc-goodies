@@ -4,7 +4,6 @@
 
 ### Current
 
-- AutoRefresh
 - Create zoom icons instead of hovers
 - Add hovers for all available fields.
 - Add user manager (array of ids in json file), password protected
@@ -13,6 +12,8 @@
 - Add last update
 - Add car picture
 - Add lobby tracking
+- Add changelog
+- Add inscriptions/profiles/etc as iframes in a dialog
 
 ### Next
 
@@ -23,6 +24,7 @@
 
 ### Unpublished
 
+- AutoRefresh
 - Remove last update column
 - Create user statistics (locally track numerica)
 - Fix license and remove unused columns
