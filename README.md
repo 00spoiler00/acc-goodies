@@ -4,14 +4,13 @@
 
 ### Current
 
-- Create user statistics (locally track numerica)
+- AutoRefresh
+- Create zoom icons instead of hovers
 - Add hovers for all available fields.
 - Add user manager (array of ids in json file), password protected
 - Stop transforming dates in BE and do it in FE
-. Remove all backend html and value transformation favoring fe interpretation
 - Allow copy server identifier
 - Add last update
-- Remove value processing in backend
 - Add car picture
 - Add lobby tracking
 
@@ -24,7 +23,10 @@
 
 ### Unpublished
 
+- Remove last update column
+- Create user statistics (locally track numerica)
 - Fix license and remove unused columns
+- Remove most backend html and value transformation favoring fe interpretation
 
 ### V 0.1 Vuetified
 

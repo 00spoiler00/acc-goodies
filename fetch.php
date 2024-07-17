@@ -19,8 +19,8 @@ class PitskillDataFetcher
         'Licence' => 'payload.tpc_driver_data.licence_class',
         'PitRep' => 'payload.tpc_driver_data.currentPitRep',
         'PitSkill' => 'payload.tpc_driver_data.currentPitSkill',
-        'Daily Races' => 'payload.tpc_driver_data.daily_race_count',
-        'Last Activity' => 'payload.sigma_user_data.updated_at',
+        // 'Last Race Date' => 'payload.tpc_driver_data.stats.lastRaceDate',
+        // 'Daily Races' => 'payload.tpc_driver_data.daily_race_count',
         // 'VIP Level' => 'payload.sigma_user_data.vip_level',
         // 'Signup Date' => 'payload.sigma_user_data.signupDate',
     ];
@@ -48,6 +48,9 @@ class PitskillDataFetcher
 
             // Driver
             $data = $this->getDataFromUrl("https://api.pitskill.io/api/pitskill/getdriverinfo?id=$id");
+
+            // Temp debug
+            // file_put_contents($id.'.json', json_encode($data));
 
             // Create statistics
             $this->createStats($id, $data);
@@ -133,12 +136,6 @@ class PitskillDataFetcher
     {
         switch ($column) {
                 
-            case 'Circuit Image':
-                return "https://cdn.pitskill.io/public/TrackPhoto-" . $value;
-        
-            case 'Enroll Link':
-                return "https://pitskill.io/event/".$value;
-            
             case 'Broadcasted':
                 $out = [];
                 foreach ($value as $broadcast) {
@@ -148,12 +145,8 @@ class PitskillDataFetcher
             
             case 'Signup Date':
             case 'On Date':
-            case 'Last Activity':
                 return $this->transformDate($value, 'd/m/y H:i');
-            case 'Last Race':
-                return $this->transformDate($value, 'd/m/y');
-            case 'Server SoF':
-                return intval($value);
+
             default:
                 return $value;
         }
