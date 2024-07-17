@@ -12,17 +12,17 @@
 
 <body>
     <div id="app">
-        <v-app>
+        <v-app dark>
             <v-main>
-                <v-app-bar app primary class="elevation-4">
-                    <v-toolbar-title secondary>PitSkill A Tot Drap</v-toolbar-title>
+                <v-app-bar app class="elevation-4">
+                    <v-toolbar-title>PitSkill A Tot Drap</v-toolbar-title>
                     <v-spacer></v-spacer>
                     <v-progress-circular
                         :rotate="-90"
                         :size="40"
                         :width="4"
                         :value="countdownValue"
-                        color="primary">
+                        color="red">
                         {{ countdownTime }}
                     </v-progress-circular>
                 </v-app-bar>
@@ -39,7 +39,7 @@
                             <v-card-title>
                                 <v-text-field v-model="registrationsSearch" label="Cerca registres" append-icon="mdi-magnify" single-line hide-details></v-text-field>
                             </v-card-title>
-                            <v-data-table :headers="registrationHeaders" :items="filteredRegistrations" class="elevation-4 mt-5" disable-pagination :hide-default-footer="true">
+                            <v-data-table :headers="registrationHeaders" :items="filteredRegistrations" class="elevation-4 mt-5" disable-pagination :hide-default-footer="true" dense>
                                 <template v-slot:top>
                                     <v-toolbar flat>
                                         <v-toolbar-title>Registres</v-toolbar-title>
@@ -103,7 +103,7 @@
                                 <template v-slot:item="props">
                                     <tr>
                                         <td>
-                                            <v-avatar size="64">
+                                            <v-avatar size="36" my-1>
                                                 <v-img :src='props.item.Image' />
                                             </v-avatar>
                                         </td>
@@ -161,7 +161,22 @@
 
         new Vue({
             el: '#app',
-            vuetify: new Vuetify(),
+            vuetify: new Vuetify({
+                theme: {
+                    dark: true,
+                    themes: {
+                        dark: {
+                            primary: '#ff0000', // Red
+                            secondary: '#1a1a1a', // Dark gray/black
+                            accent: '#ff4d4d', // Lighter red
+                            error: '#ff5252', // Error red
+                            info: '#29b6f6', // Info blue
+                            success: '#4caf50', // Success green
+                            warning: '#fb8c00', // Warning orange
+                        },
+                    },
+                },
+            }),
             data: () => ({
                 tab: null,
                 driversSearch: '',
@@ -227,11 +242,11 @@
 
                 getRegistrationRowClass(upcomingEvent) {
                     const eventCount = this.registrations.filter(reg => reg['Upcoming Event'] === upcomingEvent).length;
-                    const intensity = Math.min(255, 100 + eventCount * 10);
+                    // const intensity = Math.min(255, 100 + eventCount * 10);
                     return {
-                        'bg-red-100': intensity <= 150,
-                        'bg-red-200': intensity > 150 && intensity <= 200,
-                        'bg-red-300': intensity > 200 && intensity <= 255,
+                        'bg-red-500': eventCount == 1,
+                        'bg-red-600': eventCount == 2,
+                        'bg-red-700': eventCount > 2,
                     };
                 },
 
