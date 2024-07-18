@@ -4,6 +4,8 @@
 
 ### Current
 
+- Add manifest images the logos from Audet to icon-192x192.png and icon-512x512.png
+- Move data json to folder. Create a backup of stats and track it.
 - Create zoom icons instead of hovers
 - Add hovers for all available fields.
 - Add user manager (array of ids in json file), password protected
@@ -24,6 +26,7 @@
 
 ### Unpublished
 
+- Add manifest
 - AutoRefresh
 - Remove last update column
 - Create user statistics (locally track numerica)

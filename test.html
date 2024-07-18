@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PitSkill A Tot Drap</title>
-    <link rel="manifest" href="/manifest.json">
     <link href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/vuetify@2.5.10/dist/vuetify.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
@@ -51,12 +50,8 @@
                                         <td>{{ props.item.Driver }}</td>
                                         <td v-html="timeUntil(props.item['On Date'])"></td>
                                         <td>
-                                            <v-tooltip bottom>
-                                                <template v-slot:activator="{ on, attrs }">
-                                                    <span v-bind="attrs" v-on="on">{{ props.item['Upcoming Event'] }}</span>
-                                                </template>
-                                                <span>{{ props.item.Server }}</span>
-                                            </v-tooltip>
+                                            <span>{{ props.item['Upcoming Event'] }}</span>
+                                            <v-icon small @click="openDialog('eventDialog', props.item)">{{ props.item.Server }}</v-icon>
                                         </td>
                                         <td>
                                             <v-btn
@@ -70,17 +65,8 @@
                                         <td>{{ props.item['Server Splits'] }}</td>
                                         <td>{{ props.item.Car }}</td>
                                         <td>
-                                            <v-menu open-on-hover>
-                                                <template v-slot:activator="{ on, attrs }">
-                                                    <div v-bind="attrs" v-on="on">{{ props.item.Track }}</div>
-                                                </template>
-                                                <v-card>
-                                                    <v-img
-                                                        :src="'https://cdn.pitskill.io/public/TrackPhoto-' + props.item['Circuit Image']"
-                                                        max-width="600"
-                                                        class="big-img"></v-img>
-                                                </v-card>
-                                            </v-menu>
+                                            <span>{{ props.item.Track }}</span>
+                                            <v-icon small @click="openDialog('trackDialog', props.item)">mdi-magnify</v-icon>
                                         </td>
                                         <td>{{ props.item.Registration }}</td>
                                         <td v-html="props.item.Broadcasted"></td>
@@ -117,30 +103,12 @@
                                             <span :class="getLicenceClass(props.item.Licence)">{{props.item.Licence}}</span>
                                         </td>
                                         <td>
-                                            <v-menu open-on-hover>
-                                                <template v-slot:activator="{ on, attrs }">
-                                                    <span v-bind="attrs" v-on="on">{{ props.item.PitRep }}</span>
-                                                </template>
-                                                <v-card>
-                                                    <v-card-title>PitRep History</v-card-title>
-                                                    <v-card-text>
-                                                        <v-sparkline auto-draw height="300" width="400" smooth :value="props.item.Stats.PitRep" color="blue"></v-sparkline>
-                                                    </v-card-text>
-                                                </v-card>
-                                            </v-menu>
+                                            <span>{{ props.item.PitRep }}</span>
+                                            <v-icon small @click="openDialog('pitRepDialog', props.item)">mdi-chart-line</v-icon>
                                         </td>
                                         <td>
-                                            <v-menu open-on-hover>
-                                                <template v-slot:activator="{ on, attrs }">
-                                                    <span v-bind="attrs" v-on="on">{{ props.item.PitSkill }}</span>
-                                                </template>
-                                                <v-card>
-                                                    <v-card-title>PitSkill History</v-card-title>
-                                                    <v-card-text>
-                                                        <v-sparkline auto-draw height="300" width="400" smooth :value="props.item.Stats.PitSkill" color="red"></v-sparkline>
-                                                    </v-card-text>
-                                                </v-card>
-                                            </v-menu>
+                                            <span>{{ props.item.PitSkill }}</span>
+                                            <v-icon small @click="openDialog('pitSkillDialog', props.item)">mdi-chart-line</v-icon>
                                         </td>
                                     </tr>
                                 </template>
@@ -149,6 +117,69 @@
                     </v-tab-item>
                 </v-tabs>
             </v-main>
+
+            <!-- Dialogs -->
+            <v-dialog v-model="dialogVisible.eventDialog" max-width="600">
+                <v-card>
+                    <v-card-title>
+                        Esdeveniment proper
+                        <v-spacer></v-spacer>
+                        <v-btn icon @click="dialogVisible.eventDialog = false">
+                            <v-icon>mdi-close</v-icon>
+                        </v-btn>
+                    </v-card-title>
+                    <v-card-text>
+                        <v-img :src="'https://cdn.pitskill.io/public/TrackPhoto-' + dialogItem['Circuit Image']" class="big-img"></v-img>
+                        <p>{{ dialogItem.Server }}</p>
+                    </v-card-text>
+                </v-card>
+            </v-dialog>
+
+            <v-dialog v-model="dialogVisible.trackDialog" max-width="600">
+                <v-card>
+                    <v-card-title>
+                        Circuit
+                        <v-spacer></v-spacer>
+                        <v-btn icon @click="dialogVisible.trackDialog = false">
+                            <v-icon>mdi-close</v-icon>
+                        </v-btn>
+                    </v-card-title>
+                    <v-card-text>
+                        <v-img :src="'https://cdn.pitskill.io/public/TrackPhoto-' + dialogItem['Circuit Image']" class="big-img"></v-img>
+                    </v-card-text>
+                </v-card>
+            </v-dialog>
+
+            <v-dialog v-model="dialogVisible.pitRepDialog" max-width="600">
+                <v-card>
+                    <v-card-title>
+                        PitRep History
+                        <v-spacer></v-spacer>
+                        <v-btn icon @click="dialogVisible.pitRepDialog = false">
+                            <v-icon>mdi-close</v-icon>
+                        </v-btn>
+                    </v-card-title>
+                    <v-card-text>
+                        <v-sparkline auto-draw height="300" width="400" smooth :value="dialogItem.Stats.PitRep" color="blue"></v-sparkline>
+                    </v-card-text>
+                </v-card>
+            </v-dialog>
+
+            <v-dialog v-model="dialogVisible.pitSkillDialog" max-width="600">
+                <v-card>
+                    <v-card-title>
+                        PitSkill History
+                        <v-spacer></v-spacer>
+                        <v-btn icon @click="dialogVisible.pitSkillDialog = false">
+                            <v-icon>mdi-close</v-icon>
+                        </v-btn>
+                    </v-card-title>
+                    <v-card-text>
+                        <v-sparkline auto-draw height="300" width="400" smooth :value="dialogItem.Stats.PitSkill" color="red"></v-sparkline>
+                    </v-card-text>
+                </v-card>
+            </v-dialog>
+
         </v-app>
     </div>
 
@@ -207,6 +238,13 @@
                 registrations: [],
                 countdownValue: 100,
                 countdownTime: 10,
+                dialogVisible: {
+                    eventDialog: false,
+                    trackDialog: false,
+                    pitRepDialog: false,
+                    pitSkillDialog: false,
+                },
+                dialogItem: {},
             }),
             computed: {
                 filteredDrivers() {
@@ -277,6 +315,11 @@
                             this.fetchData();
                         }
                     }, 1000);
+                },
+
+                openDialog(dialogName, item) {
+                    this.dialogItem = item;
+                    this.dialogVisible[dialogName] = true;
                 },
             },
             beforeDestroy() {
