@@ -34,20 +34,16 @@
                     <v-tab>
                         Ranking de pilots
                     </v-tab>
-
+                </v-tabs>
+                <v-tabs-items v-model="tab" :touch="{}">
                     <v-tab-item class="mx-4">
                         <v-card flat>
                             <v-card-title>
                                 <v-text-field v-model="registrationsSearch" label="Cerca registres" append-icon="mdi-magnify" single-line hide-details></v-text-field>
                             </v-card-title>
                             <v-data-table :headers="registrationHeaders" :items="filteredRegistrations" class="elevation-4 mt-5" disable-pagination :hide-default-footer="true" dense>
-                                <template v-slot:top>
-                                    <v-toolbar flat>
-                                        <v-toolbar-title>Registres</v-toolbar-title>
-                                    </v-toolbar>
-                                </template>
                                 <template v-slot:item="props">
-                                    <tr :class="getRegistrationRowClass(props.item['Upcoming Event'])">
+                                    <tr :class="getRegistrationRowClass(props.item['Upcoming Event'])" class="whitespace-nowrap">
                                         <td>{{ props.item.Driver }}</td>
                                         <td v-html="timeUntil(props.item['On Date'])"></td>
                                         <td>
@@ -96,11 +92,6 @@
                                 <v-text-field v-model="driversSearch" label="Cerca pilots" append-icon="mdi-magnify" single-line hide-details></v-text-field>
                             </v-card-title>
                             <v-data-table :headers="headers" :items="filteredDrivers" class="elevation-4" disable-pagination :hide-default-footer="true">
-                                <template v-slot:top>
-                                    <v-toolbar flat>
-                                        <v-toolbar-title>Pilots</v-toolbar-title>
-                                    </v-toolbar>
-                                </template>
                                 <template v-slot:item="props">
                                     <tr>
                                         <td>
@@ -147,6 +138,7 @@
                             </v-data-table>
                         </v-card>
                     </v-tab-item>
+                </v-tabs-items>
                 </v-tabs>
             </v-main>
         </v-app>

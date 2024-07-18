@@ -4,18 +4,18 @@
 
 ### Current
 
-- Add manifest images the logos from Audet to icon-192x192.png and icon-512x512.png
 - Move data json to folder. Create a backup of stats and track it.
 - Create zoom icons instead of hovers
 - Add hovers for all available fields.
 - Add user manager (array of ids in json file), password protected
 - Stop transforming dates in BE and do it in FE
 - Allow copy server identifier
-- Add last update
-- Add car picture
+- Add last update of backend
+- Add car picture?
 - Add lobby tracking
 - Add changelog
 - Add inscriptions/profiles/etc as iframes in a dialog
+- Add help icon to install as app
 
 ### Next
 
@@ -26,6 +26,7 @@
 
 ### Unpublished
 
+- Add manifest images the logos from Audet to icon-192x192.png and icon-512x512.png
 - Add manifest
 - AutoRefresh
 - Remove last update column

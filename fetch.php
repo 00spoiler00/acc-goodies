@@ -6,7 +6,7 @@ use Carbon\Carbon;
 
 class PitskillDataFetcher
 {
-    private $ids = [17789, 11993, 1422, 9318, 17425, 15071, 17011, 14448, 14233, 15477, 16957, 15087, 15713, 17028, 15095, 17918, 18028, 17558, 18098, 15484];
+    private $ids = [17789, 11993, 1422, 9318, 17425, 15071, 17011, 14448, 14233, 15477, 16957, 15087, 15713, 17028, 15095, 17918, 18028, 17558, 18098, 15484, 18271];
     private $drivers = [];
     private $registrations = [];
     private $stats = [];
@@ -50,7 +50,9 @@ class PitskillDataFetcher
             $data = $this->getDataFromUrl("https://api.pitskill.io/api/pitskill/getdriverinfo?id=$id");
 
             // Temp debug
-            // file_put_contents($id.'.json', json_encode($data));
+            if($id == 1422) {
+                file_put_contents('json/exampleSourceDriver.json', json_encode($data));
+            }
 
             // Create statistics
             $this->createStats($id, $data);
