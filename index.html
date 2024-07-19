@@ -16,14 +16,33 @@
         <v-app dark>
             <v-main>
                 <v-app-bar app class="elevation-4">
-                    <v-toolbar-title>PitSkill A Tot Drap</v-toolbar-title>
+                    <v-toolbar-title>
+                        <div class="flex items-center justify-center">
+
+                            <a href="https://www.twitch.tv/a_tot_drap">
+                                <v-avatar size="36" my-1>
+                                    <v-img src='./images/icons/android-chrome-192x192.png' />
+                                </v-avatar>
+                            </a>
+                            <span class="ml-4 font-bold">
+                                PitSkill A Tot Drap
+                            </span>
+
+
+                        </div>
+                    </v-toolbar-title>
                     <v-spacer></v-spacer>
+                    <div class="mr-4 hidden sm:block">
+                        <a href="https://www.pitskill.io">
+                            <img src='./images/icons/pitskill.png' style="height: 16px" />
+                        </a>
+                    </div>
                     <v-progress-circular
                         :rotate="-90"
                         :size="40"
                         :width="4"
                         :value="countdownValue"
-                        color="red">
+                        color="primary">
                         {{ countdownTime }}
                     </v-progress-circular>
                 </v-app-bar>
@@ -63,7 +82,6 @@
                                             </v-btn>
                                         </td>
                                         <td>{{ Math.round(parseFloat(props.item['Server SoF']) * 10) / 10 }}</td>
-                                        <td>{{ props.item['Server Splits'] }}</td>
                                         <td>{{ props.item.Car }}</td>
                                         <td>
                                             <v-menu open-on-hover>
@@ -80,6 +98,7 @@
                                         </td>
                                         <td>{{ props.item.Registration }}</td>
                                         <td v-html="props.item.Broadcasted"></td>
+                                        <td>{{ props.item['Server Splits'] }}</td>
                                     </tr>
                                 </template>
                             </v-data-table>
@@ -105,7 +124,12 @@
                                             </a>
                                         </td>
                                         <td>
-                                            <span :class="getLicenceClass(props.item.Licence)">{{props.item.Licence}}</span>
+                                            <div v-if="getLicence(props.item) === 'Provisional'" class="h-8 w-28 font-bold rounded-xl border-2 bg-red-800 border-yellow-400 text-center py-1">Provisional</div>
+                                            <div v-else-if="getLicence(props.item) === 'Bronze'" class="h-8 w-28 font-bold rounded-xl border-2 bg-red-800 border-red-800 text-center py-1">Bronze</div>
+                                            <div v-else-if="getLicence(props.item) === 'Silver'" class="h-8 w-28 font-bold rounded-xl border-2 border-gray-400 bg-gray-400  text-center py-1 text-black">Silver</div>
+                                            <div v-else-if="getLicence(props.item) === 'Platinum'" class="h-8 w-28 font-bold rounded-xl border-2 border-white bg-white text-center py-1 text-black">Platinum</div>
+                                            <div v-else-if="getLicence(props.item) === 'Elite'" class="h-8 w-28 font-bold rounded-xl border-2 border-yellow-400 text-center py-1 text-yellow-400">Elite</div>
+                                            <div v-else class="h-8 w-28 font-bold rounded-xl border-2 border-yellow-400 text-center py-1 text-yellow-400">? {{props.item.PitRep}}/{{props.item.PitSkill}}</div>
                                         </td>
                                         <td>
                                             <v-menu open-on-hover>
@@ -159,7 +183,7 @@
                     dark: true,
                     themes: {
                         dark: {
-                            primary: '#ff0000', // Red
+                            primary: '#f76a48', // Red
                             secondary: '#1a1a1a', // Dark gray/black
                             accent: '#ff4d4d', // Lighter red
                             error: '#ff5252', // Error red
@@ -177,8 +201,8 @@
                 progress: 100,
                 interval: null,
                 headers: [
-                    { text: 'Imatge', align: 'start', sortable: false, value: 'Image' },
-                    { text: 'Nom del pilot', value: 'Driver Name' },
+                    { text: '', align: 'start', sortable: false, value: 'Image' },
+                    { text: 'Pilot', value: 'Driver Name' },
                     { text: 'Llicència', value: 'Licence' },
                     { text: 'PitRep', value: 'PitRep' },
                     { text: 'PitSkill', value: 'PitSkill' },
@@ -186,14 +210,14 @@
                 registrationHeaders: [
                     { text: 'Pilot', value: 'Driver' },
                     { text: 'Data', value: 'On Date' },
-                    { text: 'Esdeveniment proper', value: 'Upcoming Event' },
-                    { text: 'Inscripció', value: 'Enroll Link' },
-                    { text: 'Servidor SoF', value: 'Server SoF' },
-                    { text: 'Divisions del servidor', value: 'Server Splits' },
+                    { text: 'Esdevenimment', value: 'Upcoming Event' },
+                    { text: 'Inscripció', value: 'Enroll Link', class: 'whitespace-nowrap', align: 'center' },
+                    { text: 'SoF', value: 'Server SoF' },
                     { text: 'Cotxe', value: 'Car' },
                     { text: 'Circuit', value: 'Track' },
                     { text: 'Inscrits', value: 'Registration' },
                     { text: 'Retransmissió', value: 'Broadcasted' },
+                    { text: 'Splits', value: 'Server Splits' },
                 ],
                 drivers: [],
                 registrations: [],
@@ -243,17 +267,17 @@
                     };
                 },
 
-                getLicenceClass(license) {
-                    const licenseColorMap = {
-                        'S Class': 'bg-green-500',
-                        'A Class': 'bg-red-500',
-                        'B Class': 'bg-blue-500',
-                        'C Class': 'bg-purple-500',
-                        'Rookie': 'bg-gray-500',
-                    };
+                getLicence(item) {
+                    const pitrep = item.PitRep;
+                    const pitskill = item.PitSkill;
 
-                    return `text-white rounded-full whitespace-nowrap px-3 py-1 ${licenseColorMap[license] || 'bg-default'}`;
+                    if (pitrep <= 5) return 'Provisional';
+                    if (pitrep > 5 && pitskill < 1900) return 'Bronze';
+                    if (pitrep > 10 && pitskill > 1900) return 'Silver';
+                    if (pitrep > 15 && pitskill >= 2750) return 'Platinum';
+                    if (pitrep > 20 && pitskill >= 3500) return 'Elite';
                 },
+
 
                 timeUntil(dateString) {
                     return dateString + ' <b>(' + moment(dateString, "DD/MM/YY HH:mm").fromNow() + ')</b>';

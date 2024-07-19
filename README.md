@@ -4,13 +4,13 @@
 
 ### Current
 
-- Move data json to folder. Create a backup of stats and track it.
 - Create zoom icons instead of hovers
 - Add hovers for all available fields.
+- Add last update of backend
+- Move data json to folder. Create a backup of stats and track it.
 - Add user manager (array of ids in json file), password protected
 - Stop transforming dates in BE and do it in FE
 - Allow copy server identifier
-- Add last update of backend
 - Add car picture?
 - Add lobby tracking
 - Add changelog

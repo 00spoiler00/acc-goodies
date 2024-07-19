@@ -138,10 +138,13 @@ class PitskillDataFetcher
     {
         switch ($column) {
                 
+            case 'Driver Name':
+                return mb_convert_case($value, MB_CASE_TITLE, "UTF-8");
+
             case 'Broadcasted':
                 $out = [];
                 foreach ($value as $broadcast) {
-                    $out[] = "<a href='" . $broadcast['broadcast_url'] . "'>" . $broadcast['broadcast_name'] . "</a>";
+                    $out[] = "<a href='" . $broadcast['broadcast_url'] . "'>🔗</a> ".$broadcast['broadcast_name'];
                 }
                 return implode("<br>", $out);
             
