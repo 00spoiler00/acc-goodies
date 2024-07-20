@@ -18,8 +18,7 @@
                 <v-app-bar app class="elevation-4">
                     <v-toolbar-title>
                         <div class="flex items-center justify-center">
-
-                            <a href="https://www.twitch.tv/a_tot_drap">
+                            <a href="https://discord.gg/GFvYkjYbta">
                                 <v-avatar size="36" my-1>
                                     <v-img src='./images/icons/android-chrome-192x192.png' />
                                 </v-avatar>
@@ -27,8 +26,6 @@
                             <span class="ml-4 font-bold">
                                 PitSkill A Tot Drap
                             </span>
-
-
                         </div>
                     </v-toolbar-title>
                     <v-spacer></v-spacer>
@@ -46,6 +43,7 @@
                         {{ countdownTime }}
                     </v-progress-circular>
                 </v-app-bar>
+
                 <v-tabs v-model="tab">
                     <v-tab>
                         Registres a curses
@@ -60,45 +58,53 @@
                             <v-card-title>
                                 <v-text-field v-model="registrationsSearch" label="Cerca registres" append-icon="mdi-magnify" single-line hide-details></v-text-field>
                             </v-card-title>
-                            <v-data-table :headers="registrationHeaders" :items="filteredRegistrations" class="elevation-4 mt-5" disable-pagination :hide-default-footer="true" dense>
+                            <v-data-table :mobile-breakpoint="0" :headers="registrationHeaders" :items="filteredRegistrations" class="elevation-4 mt-5" disable-pagination :hide-default-footer="true" dense>
                                 <template v-slot:item="props">
-                                    <tr :class="getRegistrationRowClass(props.item['Upcoming Event'])" class="whitespace-nowrap">
-                                        <td>{{ props.item.Driver }}</td>
-                                        <td v-html="timeUntil(props.item['On Date'])"></td>
+                                    <tr class="whitespace-nowrap">
                                         <td>
-                                            <v-tooltip bottom>
-                                                <template v-slot:activator="{ on, attrs }">
-                                                    <span v-bind="attrs" v-on="on">{{ props.item['Upcoming Event'] }}</span>
-                                                </template>
-                                                <span>{{ props.item.Server }}</span>
-                                            </v-tooltip>
-                                        </td>
-                                        <td>
+                                            <v-progress-circular
+                                                class="mr-2"
+                                                :value="getInterest(props.item['Upcoming Event']) * (100/10)"
+                                                :rotate="0"
+                                                :size="32"
+                                                :width="4"
+                                                color="primary">
+                                                {{ getInterest(props.item['Upcoming Event']) }}
+                                            </v-progress-circular>
+
+                                            <!-- Actions-->
+                                            <v-btn small icon @click="openDialog('Server', props.item.Server)">
+                                                <v-icon color="primary">mdi-connection</v-icon>
+                                            </v-btn>
+
                                             <v-btn
+                                                small
                                                 :href="'https://pitskill.io/event/' + props.item['Enroll Link']"
                                                 target="_blank"
                                                 icon>
-                                                <v-icon>mdi-open-in-new</v-icon>
+                                                <v-icon color="primary">mdi-account-plus</v-icon>
                                             </v-btn>
+
+                                            <v-btn v-if="props.item['Broadcasted']" small icon @click="openDialog('Emissions', props.item['Broadcasted'])">
+                                                <v-icon color="primary">mdi-video</v-icon>
+                                            </v-btn>
+
                                         </td>
-                                        <td>{{ Math.round(parseFloat(props.item['Server SoF']) * 10) / 10 }}</td>
+
+                                        <td>{{ props.item.Driver }}</td>
+                                        <td>
+                                            <div v-text="timeUntil(props.item['On Date'])"></div>
+                                            <div v-text="props.item['On Date']" class="text-xs"></div>
+                                        </td>
+                                        <td>{{ props.item['Upcoming Event'] }}</td>
+                                        <td>{{ Math.round(parseFloat(props.item['Server SoF']) * 10) / 10 }} ({{ props.item.Registration }})</td>
                                         <td>{{ props.item.Car }}</td>
                                         <td>
-                                            <v-menu open-on-hover>
-                                                <template v-slot:activator="{ on, attrs }">
-                                                    <div v-bind="attrs" v-on="on">{{ props.item.Track }}</div>
-                                                </template>
-                                                <v-card>
-                                                    <v-img
-                                                        :src="'https://cdn.pitskill.io/public/TrackPhoto-' + props.item['Circuit Image']"
-                                                        max-width="600"
-                                                        class="big-img"></v-img>
-                                                </v-card>
-                                            </v-menu>
+                                            <v-btn small icon @click="openDialog('Circuit Image', props.item['Circuit Image'])">
+                                                <v-icon color="primary">mdi-image</v-icon>
+                                            </v-btn>
+                                            {{ props.item.Track }}
                                         </td>
-                                        <td>{{ props.item.Registration }}</td>
-                                        <td v-html="props.item.Broadcasted"></td>
-                                        <td>{{ props.item['Server Splits'] }}</td>
                                     </tr>
                                 </template>
                             </v-data-table>
@@ -110,7 +116,7 @@
                             <v-card-title>
                                 <v-text-field v-model="driversSearch" label="Cerca pilots" append-icon="mdi-magnify" single-line hide-details></v-text-field>
                             </v-card-title>
-                            <v-data-table :headers="headers" :items="filteredDrivers" class="elevation-4" disable-pagination :hide-default-footer="true">
+                            <v-data-table :mobile-breakpoint="0" :headers="headers" :items="filteredDrivers" class="elevation-4" disable-pagination :hide-default-footer="true">
                                 <template v-slot:item="props">
                                     <tr>
                                         <td>
@@ -132,38 +138,61 @@
                                             <div v-else class="h-8 w-28 font-bold rounded-xl border-2 border-yellow-400 text-center py-1 text-yellow-400">? {{props.item.PitRep}}/{{props.item.PitSkill}}</div>
                                         </td>
                                         <td>
-                                            <v-menu open-on-hover>
-                                                <template v-slot:activator="{ on, attrs }">
-                                                    <span v-bind="attrs" v-on="on">{{ props.item.PitRep }}</span>
-                                                </template>
-                                                <v-card>
-                                                    <v-card-title>PitRep History</v-card-title>
-                                                    <v-card-text>
-                                                        <v-sparkline auto-draw height="300" width="400" smooth :value="props.item.Stats.PitRep" color="blue"></v-sparkline>
-                                                    </v-card-text>
-                                                </v-card>
-                                            </v-menu>
+                                            <v-btn icon @click="openDialog('PitRep', props.item.Stats.PitRep)">
+                                                <v-icon color="secondary">mdi-chart-line</v-icon>
+                                            </v-btn>
+                                            <span>{{ props.item.PitRep }}</span>
                                         </td>
                                         <td>
-                                            <v-menu open-on-hover>
-                                                <template v-slot:activator="{ on, attrs }">
-                                                    <span v-bind="attrs" v-on="on">{{ props.item.PitSkill }}</span>
-                                                </template>
-                                                <v-card>
-                                                    <v-card-title>PitSkill History</v-card-title>
-                                                    <v-card-text>
-                                                        <v-sparkline auto-draw height="300" width="400" smooth :value="props.item.Stats.PitSkill" color="red"></v-sparkline>
-                                                    </v-card-text>
-                                                </v-card>
-                                            </v-menu>
+                                            <v-btn icon @click="openDialog('PitSkill', props.item.Stats.PitSkill)">
+                                                <v-icon color="primary">mdi-chart-line</v-icon>
+                                            </v-btn>
+                                            <span>{{ props.item.PitSkill }}</span>
                                         </td>
                                     </tr>
                                 </template>
                             </v-data-table>
+
                         </v-card>
                     </v-tab-item>
                 </v-tabs-items>
                 </v-tabs>
+
+                <!-- Reusable dialogs -->
+                <v-dialog v-model="isDialogOpen" max-width="800">
+                    <v-card v-if="dialogData">
+                        <v-card-title>
+                            {{dialogMode}}
+                            <v-spacer></v-spacer>
+                            <v-btn icon @click="isDialogOpen = false">
+                                <v-icon>mdi-close</v-icon>
+                            </v-btn>
+                        </v-card-title>
+                        <v-card-text>
+
+                            <v-img v-if="['Circuit Image'].includes(dialogMode)" :src="'https://cdn.pitskill.io/public/TrackPhoto-' + dialogData"></v-img>
+
+                            <v-template v-if="['Emissions'].includes(dialogMode)">
+                                <div class="font-bold" v-html="dialogData"></div>
+                            </v-template>
+
+                            <v-template v-if="['Server'].includes(dialogMode)">
+                                <div class="font-bold">Detalls del servidor</div>
+                                <div>{{dialogData}}</div>
+                            </v-template>
+
+                            <v-template v-if="['PitSkill', 'PitRep'].includes(dialogMode)">
+                                <v-sparkline auto-draw smooth :value="dialogData" :color="dialogMode == 'PitSkill' ? 'primary' : 'secondary'" :height="300" :width="400" stroke-linecap="round">
+                                    <template v-slot:label="item">
+                                        {{ item.value }}
+                                    </template>
+                                </v-sparkline>
+                            </v-template>
+                        </v-card-text>
+                    </v-card>
+                </v-dialog>
+
+
             </v-main>
         </v-app>
     </div>
@@ -173,8 +202,9 @@
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/min/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/locale/ca.js"></script>
 
+
     <script>
-        moment.locale('ca');
+        moment.locale('ca')
 
         new Vue({
             el: '#app',
@@ -184,7 +214,7 @@
                     themes: {
                         dark: {
                             primary: '#f76a48', // Red
-                            secondary: '#1a1a1a', // Dark gray/black
+                            secondary: '#29b6f6', // Dark gray/black
                             accent: '#ff4d4d', // Lighter red
                             error: '#ff5252', // Error red
                             info: '#29b6f6', // Info blue
@@ -208,97 +238,120 @@
                     { text: 'PitSkill', value: 'PitSkill' },
                 ],
                 registrationHeaders: [
+                    { text: '', value: '', align: 'center' },
                     { text: 'Pilot', value: 'Driver' },
                     { text: 'Data', value: 'On Date' },
                     { text: 'Esdevenimment', value: 'Upcoming Event' },
-                    { text: 'Inscripció', value: 'Enroll Link', class: 'whitespace-nowrap', align: 'center' },
-                    { text: 'SoF', value: 'Server SoF' },
+                    { text: 'SoF (#)', value: 'Server SoF' },
                     { text: 'Cotxe', value: 'Car' },
                     { text: 'Circuit', value: 'Track' },
-                    { text: 'Inscrits', value: 'Registration' },
-                    { text: 'Retransmissió', value: 'Broadcasted' },
-                    { text: 'Splits', value: 'Server Splits' },
+                    // { text: 'Inscrits', value: 'Registration' },
+                    // { text: 'Splits', value: 'Server Splits' },
                 ],
                 drivers: [],
                 registrations: [],
                 countdownValue: 100,
                 countdownTime: 10,
+
+                dialogData: null,
+                dialogMode: null,
+                isDialogOpen: false,
+
+                trackDialog: false,
+
+                selectedTrack: {},
             }),
             computed: {
                 filteredDrivers() {
                     return this.drivers.filter(driver => {
-                        const searchTerm = this.driversSearch.toLowerCase();
+                        const searchTerm = this.driversSearch.toLowerCase()
                         return Object.values(driver).some(value =>
                             value.toString().toLowerCase().includes(searchTerm)
-                        );
-                    });
+                        )
+                    })
                 },
                 filteredRegistrations() {
                     return this.registrations.filter(registration => {
-                        const searchTerm = this.registrationsSearch.toLowerCase();
+                        const searchTerm = this.registrationsSearch.toLowerCase()
                         return Object.values(registration).some(value =>
                             value.toString().toLowerCase().includes(searchTerm)
-                        );
-                    });
-                }
+                        )
+                    })
+                },
             },
             created() {
-                this.fetchData();
-                this.startCountdown();
+                this.fetchData()
+                this.startCountdown()
             },
             methods: {
                 fetchData() {
                     fetch('./data.json')
                         .then(response => response.json())
                         .then(data => {
-                            this.drivers = data.drivers.data;
-                            this.registrations = data.registrations.data;
+                            this.drivers = data.drivers.data
+                            this.registrations = data.registrations.data
                         })
-                        .catch(error => console.error('Error fetching data:', error));
+                        .catch(error => console.error('Error fetching data:', error))
                 },
 
-                getRegistrationRowClass(upcomingEvent) {
-                    const eventCount = this.registrations.filter(reg => reg['Upcoming Event'] === upcomingEvent).length;
-                    // const intensity = Math.min(255, 100 + eventCount * 10);
-                    return {
-                        'bg-red-500': eventCount == 1,
-                        'bg-red-600': eventCount == 2,
-                        'bg-red-700': eventCount > 2,
-                    };
+                getInterest(upcomingEvent) {
+                    const eventCount = this.registrations.filter(reg => reg['Upcoming Event'] === upcomingEvent).length
+                    return Math.min(10, eventCount)
                 },
 
                 getLicence(item) {
-                    const pitrep = item.PitRep;
-                    const pitskill = item.PitSkill;
+                    const pitrep = item.PitRep
+                    const pitskill = item.PitSkill
 
-                    if (pitrep <= 5) return 'Provisional';
-                    if (pitrep > 5 && pitskill < 1900) return 'Bronze';
-                    if (pitrep > 10 && pitskill > 1900) return 'Silver';
-                    if (pitrep > 15 && pitskill >= 2750) return 'Platinum';
-                    if (pitrep > 20 && pitskill >= 3500) return 'Elite';
+                    if (pitrep <= 5) return 'Provisional'
+                    if (pitrep > 5 && pitskill < 1900) return 'Bronze'
+                    if (pitrep > 10 && pitskill > 1900) return 'Silver'
+                    if (pitrep > 15 && pitskill >= 2750) return 'Platinum'
+                    if (pitrep > 20 && pitskill >= 3500) return 'Elite'
                 },
 
 
                 timeUntil(dateString) {
-                    return dateString + ' <b>(' + moment(dateString, "DD/MM/YY HH:mm").fromNow() + ')</b>';
+                    return moment(dateString, "DD/MM/YY HH:mm").fromNow()
                 },
 
                 startCountdown() {
                     setInterval(() => {
                         if (this.countdownTime > 0) {
-                            this.countdownTime--;
-                            this.countdownValue = (this.countdownTime / 10) * 100;
+                            this.countdownTime--
+                            this.countdownValue = (this.countdownTime / 10) * 100
                         } else {
-                            this.countdownTime = 10;
-                            this.fetchData();
+                            this.countdownTime = 10
+                            this.fetchData()
                         }
-                    }, 1000);
+                    }, 1000)
                 },
+
+                showTrackDialog(item) {
+                    this.selectedTrack = item
+                    this.trackDialog = true
+                },
+
+                showPitRepDialog(item) {
+                    this.selectedDriver = item
+                    this.pitRepDialog = true
+                },
+
+                showPitSkillDialog(item) {
+                    this.selectedDriver = item
+                    this.pitSkillDialog = true
+                },
+                openDialog(mode, data) {
+                    console.log(mode, data)
+                    this.dialogMode = mode
+                    this.dialogData = data
+                    this.isDialogOpen = true
+                }
             },
             beforeDestroy() {
-                clearInterval(this.interval);
+                clearInterval(this.interval)
             },
-        });
+        })
     </script>
 </body>
 
