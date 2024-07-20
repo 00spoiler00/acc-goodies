@@ -4,17 +4,15 @@
 
 ### Current
 
-- Create zoom icons instead of hovers
+- Fix stats
 - Add hovers for all available fields.
 - Add last update of backend
 - Move data json to folder. Create a backup of stats and track it.
-- Add user manager (array of ids in json file), password protected
 - Stop transforming dates in BE and do it in FE
 - Allow copy server identifier
 - Add car picture?
 - Add lobby tracking
 - Add changelog
-- Add inscriptions/profiles/etc as iframes in a dialog
 - Add help icon to install as app
 
 ### Next
@@ -26,6 +24,9 @@
 
 ### Unpublished
 
+- Avoid duplicates in Ids
+- Add user manager (array of ids in json file), password protected
+- Create zoom icons instead of hovers
 - Add manifest images the logos from Audet to icon-192x192.png and icon-512x512.png
 - Add manifest
 - AutoRefresh
