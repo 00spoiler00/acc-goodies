@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Directory to start the operation
+TARGET_DIR="."
+
+# Change ownership recursively
+chown -R marc:www-data "$TARGET_DIR"
+
+# Change file permissions to 664 recursively
+find "$TARGET_DIR" -type f -exec chmod 664 {} +
+
+# Change directory permissions to 775 recursively
+find "$TARGET_DIR" -type d -exec chmod 775 {} +
+
+echo "Permissions and ownership have been set successfully."
