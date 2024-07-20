@@ -10,6 +10,7 @@ class PitskillDataFetcher
     private $drivers = [];
     private $registrations = [];
     private $stats = [];
+    private $changes = [];
 
     private $driverColumns = [
         'Driver Id' => null,
@@ -52,23 +53,29 @@ class PitskillDataFetcher
             $data = $this->getDataFromUrl("https://api.pitskill.io/api/pitskill/getdriverinfo?id=$id");
 
             // Temp debug
-            if($id == 1422) {
-                file_put_contents('json/exampleSourceDriver.json', json_encode($data));
-            }
+            // if($id == 1422) {
+                //     file_put_contents('json/exampleSourceDriver.json', json_encode($data));
+                // }
+                
+                // Create statistics
+                $this->createStats($id, $data);
+                
+                $driver['Driver Id'] = $id;
+                foreach ($this->driverColumns as $column => $path) {
+                    if (!$path) continue;
+                    $driver[$column] = $this->transformValue($column, $this->getValue($data, $path));
+                }
+                $driver['Stats'] = $this->stats[$id] ?? [];
+                $this->drivers[] = $driver;
+                
+                // Registrations
+                $data = $this->getDataFromUrl("https://api.pitskill.io/api/events/upcomingRegistrations?id=$id");
+                
+            // Temp debug
+            // if($id == 1422) {
+            //     file_put_contents('json/exampleSourceRegistrations.json', json_encode($data));
+            // }
 
-            // Create statistics
-            $this->createStats($id, $data);
-
-            $driver['Driver Id'] = $id;
-            foreach ($this->driverColumns as $column => $path) {
-                if (!$path) continue;
-                $driver[$column] = $this->transformValue($column, $this->getValue($data, $path));
-            }
-            $driver['Stats'] = $this->stats[$id] ?? [];
-            $this->drivers[] = $driver;
-
-            // Registrations
-            $data = $this->getDataFromUrl("https://api.pitskill.io/api/events/upcomingRegistrations?id=$id");
             if (array_key_exists('payload', $data) && $data['payload'] !== null) {
                 foreach ($data['payload'] as $eventIndex => $event) {
                     $registration['Driver'] = $driver['Driver Name'];
@@ -96,14 +103,49 @@ class PitskillDataFetcher
         $lastPitSkill = end($this->stats[$id]['PitSkill']);
 
         if ($lastPitRep !== $currentPitRep) {
-            $this->stats[$id]['PitRep'][] = $currentPitRep;
+            $this->stats[$id]['PitRep'][time()] = $currentPitRep;
         }
 
         if ($lastPitSkill !== $currentPitSkill) {
-            $this->stats[$id]['PitSkill'][] = $currentPitSkill;
+            $this->stats[$id]['PitSkill'][time()] = $currentPitSkill;
         }
 
         $this->saveStats();
+    }
+
+    private function  calculateChanges() {
+        $pitRepChanges = [];
+        $pitSkillChanges = [];
+    
+        foreach ($this->stats as $id => $values) {
+            if (count($values['PitRep']) > 1) {
+                $lastRepChange = end($values['PitRep']) - prev($values['PitRep']);
+                $pitRepChanges[$id] = $lastRepChange;
+            }
+    
+            if (count($values['PitSkill']) > 1) {
+                $lastSkillChange = end($values['PitSkill']) - prev($values['PitSkill']);
+                $pitSkillChanges[$id] = $lastSkillChange;
+            }
+        }
+
+        asort($pitRepChanges);
+        asort($pitSkillChanges);
+    
+        $largestRepIncreases = array_slice($pitRepChanges, -3, 3, true);
+        $largestRepDecreases = array_slice($pitRepChanges, 0, 3, true);
+        $largestSkillIncreases = array_slice($pitSkillChanges, -3, 3, true);
+        $largestSkillDecreases = array_slice($pitSkillChanges, 0, 3, true);
+
+        arsort($largestRepIncreases);
+        arsort($largestSkillIncreases);
+
+        $this->changes = [
+            'PitRepIncreases' =>  $largestRepIncreases,
+            'PitRepDecreases' => $largestRepDecreases,
+            'PitSkillIncreases' => $largestSkillIncreases,
+            'PitSkillDecreases' => $largestSkillDecreases
+        ];
     }
 
     private function loadStats() : void
@@ -201,6 +243,7 @@ class PitskillDataFetcher
     public function saveData() : void
     {
         $this->fetchData();
+        $this->calculateChanges();
         $this->sortData();
 
         $data = [
@@ -213,6 +256,7 @@ class PitskillDataFetcher
                 'columns' => array_keys($this->registrationColumns),
                 'data' => $this->registrations,
             ],
+            'changes' => $this->changes,
         ];
 
         file_put_contents('data.json', json_encode($data));

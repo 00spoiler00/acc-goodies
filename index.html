@@ -44,12 +44,17 @@
                     </v-progress-circular>
                 </v-app-bar>
 
+
+
                 <v-tabs v-model="tab">
                     <v-tab>
-                        Registres a curses
+                        Registres
                     </v-tab>
                     <v-tab>
-                        Ranking de pilots
+                        Tops
+                    </v-tab>
+                    <v-tab>
+                        Ranking
                     </v-tab>
                 </v-tabs>
                 <v-tabs-items v-model="tab" :touch="{}">
@@ -109,6 +114,72 @@
                                 </template>
                             </v-data-table>
                         </v-card>
+                    </v-tab-item>
+
+
+                    <v-tab-item class="mx-4">
+                        <v-container class="mt-4">
+                            <v-row>
+                                <v-col cols="12" sm="6">
+                                    <v-card class="elevation-4">
+                                        <v-card-title>PitRep</v-card-title>
+                                        <v-card-subtitle>Guanyant</v-card-subtitle>
+                                        <v-col v-for="(value, key) in changes.PitRepIncreases" :key="key" cols="12">
+                                            <v-card class="elevation-4" color="success">
+                                                <v-card-title class="flex">
+                                                    <v-icon left color="white">mdi-arrow-up-bold</v-icon>
+                                                    {{ Math.round(parseFloat(value) * 100) / 100 }}
+                                                    <v-spacer></v-spacer>
+                                                    {{ drivers.find(d => d['Driver Id'] == key)['Driver Name'] }}
+                                                </v-card-title>
+                                            </v-card>
+                                        </v-col>
+                                        <v-card-subtitle>Perdent</v-card-subtitle>
+                                        <v-col v-for="(value, key) in changes.PitRepDecreases" :key="key" cols="12">
+                                            <v-card class="elevation-4" color="error">
+                                                <v-card-title class="flex">
+                                                    <v-icon left color="white">mdi-arrow-down-bold</v-icon>
+                                                    {{ Math.round(parseFloat(value) * 100) / 100 }}
+                                                    <v-spacer></v-spacer>
+                                                    {{ drivers.find(d => d['Driver Id'] == key)['Driver Name'] }}
+                                                </v-card-title>
+                                            </v-card>
+                                        </v-col>
+                                    </v-card>
+                                </v-col>
+
+                                <v-col cols="12" sm="6">
+                                    <v-card class="elevation-4">
+                                        <v-card-title>PitSkill</v-card-title>
+                                        <v-card-subtitle>Guanyant</v-card-subtitle>
+                                        <v-col v-for="(value, key) in changes.PitSkillIncreases" :key="key" cols="12">
+                                            <v-card class="elevation-4" color="success">
+                                                <v-card-title class="flex">
+                                                    <v-icon left color="white">mdi-arrow-up-bold</v-icon>
+                                                    {{ Math.round(parseFloat(value) * 10) / 10 }}
+                                                    <v-spacer></v-spacer>
+                                                    {{ drivers.find(d => d['Driver Id'] == key)['Driver Name'] }}
+                                                </v-card-title>
+                                            </v-card>
+                                        </v-col>
+
+                                        <v-card-subtitle>Perdent</v-card-subtitle>
+                                        <v-col v-for="(value, key) in changes.PitSkillDecreases" :key="key" cols="12">
+                                            <v-card class="elevation-4" color="error">
+                                                <v-card-title class="flex">
+                                                    <v-icon left color="white">mdi-arrow-down-bold</v-icon>
+                                                    {{ Math.round(parseFloat(value) * 10) / 10 }}
+                                                    <v-spacer></v-spacer>
+                                                    {{ drivers.find(d => d['Driver Id'] == key)['Driver Name'] }}
+                                                </v-card-title>
+                                            </v-card>
+                                        </v-col>
+                                    </v-card>
+                                </v-col>
+                            </v-row>
+
+
+                        </v-container>
                     </v-tab-item>
 
                     <v-tab-item class="mx-4">
@@ -250,6 +321,12 @@
                 ],
                 drivers: [],
                 registrations: [],
+                changes: {
+                    PitRepIncreases: {},
+                    PitRepDecreases: {},
+                    PitSkillIncreases: {},
+                    PitSkillDecreases: {},
+                },
                 countdownValue: 100,
                 countdownTime: 10,
 
@@ -290,6 +367,7 @@
                         .then(data => {
                             this.drivers = data.drivers.data
                             this.registrations = data.registrations.data
+                            this.changes = data.changes
                         })
                         .catch(error => console.error('Error fetching data:', error))
                 },
