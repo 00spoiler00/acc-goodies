@@ -12,4 +12,6 @@ find "$TARGET_DIR" -type f -exec chmod 664 {} +
 # Change directory permissions to 775 recursively
 find "$TARGET_DIR" -type d -exec chmod 775 {} +
 
+chmod 775 setPerms
+
 echo "Permissions and ownership have been set successfully."
