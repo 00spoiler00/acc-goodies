@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mantenimient PitSkill</title>
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.5.10/dist/vuetify.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div id="app">
+        <v-app>
+            <v-main>
+                <v-container>
+                    <h1>Mantenimient PitSkill</h1>
+                    <v-form @submit.prevent="addId">
+                        <v-text-field v-model="newId" label="Nou ID" required></v-text-field>
+                        <v-text-field v-model="password" label="Contraseña" type="password" required></v-text-field>
+                        <v-btn type="submit" color="primary">Agregar ID</v-btn>
+                    </v-form>
+                    <v-list>
+                        <v-list-item v-for="id in ids" :key="id">
+                            <v-list-item-content>{{ id }}</v-list-item-content>
+                            <v-list-item-action>
+                                <v-btn icon @click="deleteId(id)">
+                                    <v-icon>mdi-delete</v-icon>
+                                </v-btn>
+                            </v-list-item-action>
+                        </v-list-item>
+                    </v-list>
+                </v-container>
+            </v-main>
+        </v-app>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.5.10/dist/vuetify.min.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            vuetify: new Vuetify(),
+            data: {
+                ids: [],
+                newId: '',
+                password: ''
+            },
+            created() {
+                this.fetchIds();
+            },
+            methods: {
+                fetchIds() {
+                    fetch('ids.json')
+                        .then(response => response.json())
+                        .then(data => {
+                            this.ids = data.ids;
+                        });
+                },
+                addId() {
+                    fetch('api.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ id: this.newId, password: this.password })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+                                this.ids.push(this.newId);
+                                this.newId = '';
+                                this.password = '';
+                            }
+                        });
+                },
+                deleteId(id) {
+                    fetch('api.php', {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ id: id, password: this.password })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+                                this.fetchIds();
+                            }
+                        });
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
