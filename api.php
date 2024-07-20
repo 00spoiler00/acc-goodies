@@ -15,7 +15,7 @@ if (!isset($input['password']) || $input['password'] !== $password) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($input['id'])) {
-        $data['ids'][] = $input['id'];
+        $data[] = $input['id'];
         file_put_contents($jsonFile, json_encode($data));
         echo json_encode(['status' => 'success']);
     } else {
@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 } elseif ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
     if (isset($input['id'])) {
-        $data['ids'] = array_filter($data['ids'], function($id) use ($input) {
+        $data = array_filter($data, function($id) use ($input) {
             return $id !== $input['id'];
         });
         file_put_contents($jsonFile, json_encode($data));

@@ -54,7 +54,7 @@
                     fetch('ids.json')
                         .then(response => response.json())
                         .then(data => {
-                            this.ids = data.ids;
+                            this.ids = data;
                         });
                 },
                 addId() {
@@ -66,13 +66,7 @@
                         body: JSON.stringify({ id: this.newId, password: this.password })
                     })
                         .then(response => response.json())
-                        .then(data => {
-                            if (data.status === 'success') {
-                                this.ids.push(this.newId);
-                                this.newId = '';
-                                this.password = '';
-                            }
-                        });
+                        .then(data => this.fetchIds());
                 },
                 deleteId(id) {
                     fetch('api.php', {
@@ -83,11 +77,7 @@
                         body: JSON.stringify({ id: id, password: this.password })
                     })
                         .then(response => response.json())
-                        .then(data => {
-                            if (data.status === 'success') {
-                                this.fetchIds();
-                            }
-                        });
+                        .then(data => this.fetchIds());
                 }
             }
         });
