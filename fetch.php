@@ -6,7 +6,7 @@ use Carbon\Carbon;
 
 class PitskillDataFetcher
 {
-    private $ids = [17789, 11993, 1422, 9318, 17425, 15071, 17011, 14448, 14233, 15477, 16957, 15087, 15713, 17028, 15095, 17918, 18028, 17558, 18098, 15484, 18271];
+    private $ids = [];
     private $drivers = [];
     private $registrations = [];
     private $stats = [];
@@ -41,7 +41,9 @@ class PitskillDataFetcher
     ];
 
     private function fetchData() : void
-    {       
+    {
+        $this->ids = json_decode(file_get_contents('ids.json'));
+        
         $this->loadStats();
 
         foreach ($this->ids as $id) {
@@ -139,12 +141,23 @@ class PitskillDataFetcher
         switch ($column) {
                 
             case 'Driver Name':
-                return mb_convert_case($value, MB_CASE_TITLE, "UTF-8");
+                // Convert the input string to title case
+                $name = mb_convert_case($value, MB_CASE_TITLE, "UTF-8");
+                
+                // Split the name into parts
+                $nameParts = explode(' ', $name);
+                
+                // Get the first initial and the surname
+                $initial = mb_substr($nameParts[0], 0, 1) . '.';
+                $surname = end($nameParts);
+                
+                // Return the formatted name
+                return $initial . $surname;
 
             case 'Broadcasted':
                 $out = [];
                 foreach ($value as $broadcast) {
-                    $out[] = "<a href='" . $broadcast['broadcast_url'] . "'>🔗</a> ".$broadcast['broadcast_name'];
+                    $out[] = "<a href='" . $broadcast['broadcast_url'] . "'>".$broadcast['broadcast_name']."</a>";
                 }
                 return implode("<br>", $out);
             
