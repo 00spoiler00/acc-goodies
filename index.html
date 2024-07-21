@@ -205,7 +205,7 @@
                                             <div v-else-if="getLicence(props.item) === 'Silver'" class="h-8 w-28 font-bold rounded-xl border-2 border-gray-400 bg-gray-400  text-center py-1 text-black">Silver</div>
                                             <div v-else-if="getLicence(props.item) === 'Platinum'" class="h-8 w-28 font-bold rounded-xl border-2 border-white bg-white text-center py-1 text-black">Platinum</div>
                                             <div v-else-if="getLicence(props.item) === 'Elite'" class="h-8 w-28 font-bold rounded-xl border-2 border-yellow-400 text-center py-1 text-yellow-400">Elite</div>
-                                            <div v-else class="h-8 w-28 font-bold rounded-xl border-2 border-yellow-400 text-center py-1 text-yellow-400">? {{props.item.PitRep}}/{{props.item.PitSkill}}</div>
+                                            <div v-else class="h-8 w-28 font-bold rounded-xl border-2 border-yellow-400 text-center py-1 text-yellow-400">????</div>
                                         </td>
                                         <td>
                                             <v-btn icon @click="openDialog('PitRep', props.item.Stats.PitRep)">
@@ -374,11 +374,11 @@
                     const pitrep = item.PitRep
                     const pitskill = item.PitSkill
 
-                    if (pitrep <= 5) return 'Provisional'
-                    if (pitrep > 5 && pitskill < 1900) return 'Bronze'
-                    if (pitrep > 10 && pitskill > 1900) return 'Silver'
-                    if (pitrep > 15 && pitskill >= 2750) return 'Platinum'
-                    if (pitrep > 20 && pitskill >= 3500) return 'Elite'
+                    if (pitrep < 5) return 'Provisional'
+                    if (pitskill < 1900 || pitrep < 10) return 'Bronze'
+                    if (pitrep >= 10 && pitskill >= 1900) return 'Silver'
+                    if (pitrep >= 15 && pitskill >= 2750) return 'Platinum'
+                    if (pitrep >= 20 && pitskill >= 3500) return 'Elite'
                 },
 
 

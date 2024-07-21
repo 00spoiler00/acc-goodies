@@ -53,9 +53,9 @@ class PitskillDataFetcher
             $data = $this->getDataFromUrl("https://api.pitskill.io/api/pitskill/getdriverinfo?id=$id");
 
             // Temp debug
-            // if($id == 1422) {
-                //     file_put_contents('json/exampleSourceDriver.json', json_encode($data));
-                // }
+            // if($id == 18098) {
+            //         file_put_contents('json/exampleSourceDriver.json', json_encode($data));
+            //     }
                 
                 // Create statistics
                 $this->createStats($id, $data);
