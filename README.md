@@ -4,16 +4,14 @@
 
 ### Current
 
-- Fix stats
-- Add hovers for all available fields.
 - Add last update of backend
 - Move data json to folder. Create a backup of stats and track it.
 - Stop transforming dates in BE and do it in FE
 - Allow copy server identifier
-- Add car picture?
 - Add lobby tracking
-- Add changelog
+- Add changelog link
 - Add help icon to install as app
+- Add links to social networks
 
 ### Next
 
@@ -24,6 +22,8 @@
 
 ### Unpublished
 
+- Add hovers for all available fields.
+- Fix stats
 - Avoid duplicates in Ids
 - Add user manager (array of ids in json file), password protected
 - Create zoom icons instead of hovers
