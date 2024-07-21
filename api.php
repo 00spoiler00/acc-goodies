@@ -3,12 +3,10 @@ header('Content-Type: application/json');
 
 $jsonFile = 'ids.json';
 $data = json_decode(file_get_contents($jsonFile), true);
+$password = file_get_contents('.password');
 
 // Cast existing IDs to integers
 $data = array_map('intval', $data);
-
-// Definir la contrasenya correcta
-$password = 'OffTrackAT1:(';
 
 $input = json_decode(file_get_contents('php://input'), true);
 if (!isset($input['password']) || $input['password'] !== $password) {

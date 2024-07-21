@@ -64,7 +64,7 @@
                         body: JSON.stringify({ id: this.newId, password: this.password })
                     })
                         .then(response => response.json())
-                        .then(data => setTimeout(this.fetchIds(), 100));
+                        .then(data => setTimeout(this.fetchIds(), 500));
                 },
                 deleteId(id) {
                     fetch('api.php', {
@@ -75,7 +75,7 @@
                         body: JSON.stringify({ id: id, password: this.password })
                     })
                         .then(response => response.json())
-                        .then(data => setTimeout(this.fetchIds(), 100));
+                        .then(data => setTimeout(this.fetchIds(), 500));
                 }
             }
         });
