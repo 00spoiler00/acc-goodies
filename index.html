@@ -44,8 +44,6 @@
                     </v-progress-circular>
                 </v-app-bar>
 
-
-
                 <v-tabs v-model="tab">
                     <v-tab>
                         Registres
@@ -57,6 +55,7 @@
                         Ranking
                     </v-tab>
                 </v-tabs>
+
                 <v-tabs-items v-model="tab" :touch="{}">
                     <v-tab-item class="mx-4">
                         <v-card flat>
@@ -316,8 +315,6 @@
                     { text: 'SoF (#)', value: 'Server SoF' },
                     { text: 'Cotxe', value: 'Car' },
                     { text: 'Circuit', value: 'Track' },
-                    // { text: 'Inscrits', value: 'Registration' },
-                    // { text: 'Splits', value: 'Server Splits' },
                 ],
                 drivers: [],
                 registrations: [],
@@ -333,10 +330,6 @@
                 dialogData: null,
                 dialogMode: null,
                 isDialogOpen: false,
-
-                trackDialog: false,
-
-                selectedTrack: {},
             }),
             computed: {
                 filteredDrivers() {
@@ -405,24 +398,9 @@
                     }, 1000)
                 },
 
-                showTrackDialog(item) {
-                    this.selectedTrack = item
-                    this.trackDialog = true
-                },
-
-                showPitRepDialog(item) {
-                    this.selectedDriver = item
-                    this.pitRepDialog = true
-                },
-
-                showPitSkillDialog(item) {
-                    this.selectedDriver = item
-                    this.pitSkillDialog = true
-                },
                 openDialog(mode, data) {
-                    console.log(mode, data)
-                    this.dialogMode = mode
                     this.dialogData = data
+                    this.dialogMode = mode
                     this.isDialogOpen = true
                 }
             },

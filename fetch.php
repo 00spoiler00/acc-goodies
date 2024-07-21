@@ -103,11 +103,11 @@ class PitskillDataFetcher
         $lastPitSkill = end($this->stats[$id]['PitSkill']);
 
         if ($lastPitRep !== $currentPitRep) {
-            $this->stats[$id]['PitRep'][time()] = $currentPitRep;
+            $this->stats[$id]['PitRep'][] = $currentPitRep;
         }
 
         if ($lastPitSkill !== $currentPitSkill) {
-            $this->stats[$id]['PitSkill'][time()] = $currentPitSkill;
+            $this->stats[$id]['PitSkill'][] = $currentPitSkill;
         }
 
         $this->saveStats();

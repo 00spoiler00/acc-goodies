@@ -123,7 +123,7 @@
                                 <v-col cols="12" sm="6">
                                     <v-card class="elevation-4">
                                         <v-card-title>PitRep</v-card-title>
-                                        <v-card-subtitle>Guanyant</v-card-subtitle>
+                                        <v-card-subtitle>Pujant</v-card-subtitle>
                                         <v-col v-for="(value, key) in changes.PitRepIncreases" :key="key" cols="12">
                                             <v-card class="elevation-4" color="success">
                                                 <v-card-title class="flex">
@@ -134,7 +134,7 @@
                                                 </v-card-title>
                                             </v-card>
                                         </v-col>
-                                        <v-card-subtitle>Perdent</v-card-subtitle>
+                                        <v-card-subtitle>Baixant</v-card-subtitle>
                                         <v-col v-for="(value, key) in changes.PitRepDecreases" :key="key" cols="12">
                                             <v-card class="elevation-4" color="error">
                                                 <v-card-title class="flex">
@@ -151,7 +151,7 @@
                                 <v-col cols="12" sm="6">
                                     <v-card class="elevation-4">
                                         <v-card-title>PitSkill</v-card-title>
-                                        <v-card-subtitle>Guanyant</v-card-subtitle>
+                                        <v-card-subtitle>Pujant</v-card-subtitle>
                                         <v-col v-for="(value, key) in changes.PitSkillIncreases" :key="key" cols="12">
                                             <v-card class="elevation-4" color="success">
                                                 <v-card-title class="flex">
@@ -163,7 +163,7 @@
                                             </v-card>
                                         </v-col>
 
-                                        <v-card-subtitle>Perdent</v-card-subtitle>
+                                        <v-card-subtitle>Baixant</v-card-subtitle>
                                         <v-col v-for="(value, key) in changes.PitSkillDecreases" :key="key" cols="12">
                                             <v-card class="elevation-4" color="error">
                                                 <v-card-title class="flex">
@@ -252,7 +252,7 @@
                                 <div>{{dialogData}}</div>
                             </v-template>
 
-                            <v-template v-if="['PitSkill', 'PitRep'].includes(dialogMode)">
+                            <v-template v-if="['PitSkill', 'PitRep'].includes(dialogMode) && dialogData.length">
                                 <v-sparkline auto-draw smooth :value="dialogData" :color="dialogMode == 'PitSkill' ? 'primary' : 'secondary'" :height="300" :width="400" stroke-linecap="round">
                                     <template v-slot:label="item">
                                         {{ item.value }}
@@ -316,8 +316,6 @@
                     { text: 'SoF (#)', value: 'Server SoF' },
                     { text: 'Cotxe', value: 'Car' },
                     { text: 'Circuit', value: 'Track' },
-                    // { text: 'Inscrits', value: 'Registration' },
-                    // { text: 'Splits', value: 'Server Splits' },
                 ],
                 drivers: [],
                 registrations: [],
@@ -333,12 +331,9 @@
                 dialogData: null,
                 dialogMode: null,
                 isDialogOpen: false,
-
-                trackDialog: false,
-
-                selectedTrack: {},
             }),
             computed: {
+
                 filteredDrivers() {
                     return this.drivers.filter(driver => {
                         const searchTerm = this.driversSearch.toLowerCase()
@@ -347,6 +342,7 @@
                         )
                     })
                 },
+
                 filteredRegistrations() {
                     return this.registrations.filter(registration => {
                         const searchTerm = this.registrationsSearch.toLowerCase()
@@ -356,11 +352,14 @@
                     })
                 },
             },
+
             created() {
                 this.fetchData()
                 this.startCountdown()
             },
+
             methods: {
+
                 fetchData() {
                     fetch('./data.json')
                         .then(response => response.json())
@@ -405,27 +404,15 @@
                     }, 1000)
                 },
 
-                showTrackDialog(item) {
-                    this.selectedTrack = item
-                    this.trackDialog = true
-                },
-
-                showPitRepDialog(item) {
-                    this.selectedDriver = item
-                    this.pitRepDialog = true
-                },
-
-                showPitSkillDialog(item) {
-                    this.selectedDriver = item
-                    this.pitSkillDialog = true
-                },
                 openDialog(mode, data) {
                     console.log(mode, data)
-                    this.dialogMode = mode
                     this.dialogData = data
+                    this.dialogMode = mode
                     this.isDialogOpen = true
-                }
+                },
+
             },
+
             beforeDestroy() {
                 clearInterval(this.interval)
             },
