@@ -3,7 +3,8 @@
     "description": "PitSkill ranking and scheduled parser",
     "require": {
         "larapack/dd": "^1.1",
-        "nesbot/carbon": "^3.6"
+        "nesbot/carbon": "^3.6",
+        "illuminate/collections": "^11.18"
     },
     "autoload": {
         "psr-4": {

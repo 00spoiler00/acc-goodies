@@ -101,6 +101,45 @@ class PitskillDataFetcher
         });
     }
 
+    private function sendRegistrationNotifications()
+    {
+        // Get the notified registrations data
+        $notifications = json_decode(file_get_contents('notifications.json'), true);
+        $notifications = collect($notifications);
+
+        // For each current registrations
+        foreach ($this->registrations as $registration) {
+            
+            // Check if exists in notifieds
+            $exists = $notifications->contains(function($notification) use ($registration){
+                return 
+                $notification['Driver'] == $registration['Driver']
+                &&
+                $notification['Enroll Link'] == $registration['Enroll Link']
+                ;
+            }); 
+            
+            // If it does not exist in notifieds
+            if(!$exists){
+                // Notify 
+                $sof = intval($registration['Server SoF']);
+                $message = "**{$registration['Driver']}** s'ha apuntat a [{$registration['Upcoming Event']}](https://pitskill.io/event/{$registration['Enroll Link']}) *@{$registration['On Date']}* ({$sof} SoF, {$registration['Registration']} pilots)";
+                $this->sendDiscordMessage($message);
+                // And add to the notifieds
+                $notifications[] = [
+                    'Driver' => $registration['Driver'],
+                    'Enroll Link' => $registration['Enroll Link'],
+                ];    
+            }
+        }
+
+          // Purge the old notifications
+          $notifications = $notifications->slice(-100);
+    
+          // Save the notifications
+          file_put_contents('notifications.json', json_encode($notifications->toArray()));
+    }
+
     private function createStats(int $id, array $data) : void
     {
         $currentPitRep = $this->getValue($data, 'payload.tpc_driver_data.currentPitRep');
@@ -249,9 +288,26 @@ class PitskillDataFetcher
         return $data;
     }
 
-    public function saveData() : void
+    private function sendDiscordMessage(string $message) {
+        // $webhookUrl = 'https://discord.com/api/webhooks/1266792058228834315/eSDfbXpG-c2GHxcLFyEVlf-kDKr67dKghu5fLRyOB5C9JniAW-pKHPsA3tP59f2K075c';
+        $webhookUrl = 'https://discord.com/api/webhooks/1266833272697262112/SgaD33o4eRmwmWRa0xG3fChIRgnK4_Y-Jz4hhml0jArIZSlGFOVlIRZfvAwkS5EvwxdG';
+        $data = json_encode(["content" => $message]);        
+        $ch = curl_init($webhookUrl);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        
+        $response = curl_exec($ch);
+        curl_close($ch);
+        
+        return $response;
+    }
+
+    public function run() : void
     {
         $this->fetchData();
+        $this->sendRegistrationNotifications();
         $this->calculateChanges();
 
         $data = [
@@ -274,7 +330,7 @@ class PitskillDataFetcher
 
 try {
     print "Updating data!".PHP_EOL;
-    (new PitskillDataFetcher())->saveData();
+    (new PitskillDataFetcher())->run();
     print "Updated data!".PHP_EOL;
 } catch (\Throwable $th) {
     print_r($th->getMessage());

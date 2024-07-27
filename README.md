@@ -1,5 +1,8 @@
 # ChangeLog
 
+## 202407271
+
+- Add Discord channel webhook registration notification system and data model
 
 ## 20240727
 
