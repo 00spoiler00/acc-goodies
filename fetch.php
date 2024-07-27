@@ -50,44 +50,55 @@ class PitskillDataFetcher
         foreach ($this->ids as $id) {
 
             // Driver
-            $data = $this->getDataFromUrl("https://api.pitskill.io/api/pitskill/getdriverinfo?id=$id");
+            $driverJson = $this->getDataFromUrl("https://api.pitskill.io/api/pitskill/getdriverinfo?id=$id");
 
             // Temp debug
-            // if($id == 18098) {
-            //         file_put_contents('json/exampleSourceDriver.json', json_encode($data));
-            //     }
+            // if($id == 18098) file_put_contents('json/exampleSourceDriver.json', json_encode($driver));
                 
-                // Create statistics
-                $this->createStats($id, $data);
-                
-                $driver['Driver Id'] = $id;
-                foreach ($this->driverColumns as $column => $path) {
-                    if (!$path) continue;
-                    $driver[$column] = $this->transformValue($column, $this->getValue($data, $path));
-                }
-                $driver['Stats'] = $this->stats[$id] ?? [];
-                $this->drivers[] = $driver;
-                
-                // Registrations
-                $data = $this->getDataFromUrl("https://api.pitskill.io/api/events/upcomingRegistrations?id=$id");
+            // Create statistics
+            $this->createStats($id, $driverJson);
+            
+            $driver['Driver Id'] = $id;
+            foreach ($this->driverColumns as $column => $path) {
+                if (!$path) continue;
+                $driver[$column] = $this->transformValue($column, $this->getValue($driverJson, $path));
+            }
+            $driver['Stats'] = $this->stats[$id] ?? [];
+            $this->drivers[] = $driver;
+            
+            // Registrations
+            $registrationJson = $this->getDataFromUrl("https://api.pitskill.io/api/events/upcomingRegistrations?id=$id");
                 
             // Temp debug
-            // if($id == 1422) {
-            //     file_put_contents('json/exampleSourceRegistrations.json', json_encode($data));
-            // }
+            // if($id == 1422) file_put_contents('json/exampleSourceRegistrations.json', json_encode($registrationJson));
 
-            if (array_key_exists('payload', $data) && $data['payload'] !== null) {
-                foreach ($data['payload'] as $eventIndex => $event) {
+            if (array_key_exists('payload', $registrationJson) && $registrationJson['payload'] !== null) {
+                foreach ($registrationJson['payload'] as $eventIndex => $event) {
                     $registration['Driver'] = $driver['Driver Name'];
                     foreach ($this->registrationColumns as $column => $path) {
                         if (!$path) continue;
                         $path = 'payload.' . $eventIndex . '.' . $path;
-                        $registration[$column] = $this->transformValue($column, $this->getValue($data, $path));
+                        $registration[$column] = $this->transformValue($column, $this->getValue($registrationJson, $path));
                     }
                     $this->registrations[] = $registration;
                 }
             }
         }
+
+        // Sort drivers
+        usort($this->drivers, function($a, $b) {
+            if ($a['PitSkill'] == $b['PitSkill']) {
+                return $a['PitRep'] <=> $b['PitRep'];
+            }
+            return $b['PitSkill'] <=> $a['PitSkill'];
+        });
+
+        // Sort Registrations by 'On Date'
+        usort($this->registrations, function($a, $b) {
+            $dateA = Carbon::createFromFormat('d/m/y H:i', $a['On Date']);
+            $dateB = Carbon::createFromFormat('d/m/y H:i', $b['On Date']);
+            return $dateA <=> $dateB;
+        });
     }
 
     private function createStats(int $id, array $data) : void
@@ -102,49 +113,64 @@ class PitskillDataFetcher
         $lastPitRep = end($this->stats[$id]['PitRep']);
         $lastPitSkill = end($this->stats[$id]['PitSkill']);
 
-        if ($lastPitRep !== $currentPitRep) {
-            $this->stats[$id]['PitRep'][] = $currentPitRep;
+        if ($lastPitRep['value'] !== $currentPitRep) {
+            $this->stats[$id]['PitRep'][] = [
+                'date' => Carbon::now()->timestamp,
+                'value' => $currentPitRep,
+            ];
         }
-
-        if ($lastPitSkill !== $currentPitSkill) {
-            $this->stats[$id]['PitSkill'][] = $currentPitSkill;
+        
+        if ($lastPitSkill['value'] !== $currentPitSkill) {
+            $this->stats[$id]['PitSkill'][] = [
+                'date' => Carbon::now()->timestamp,
+                'value' => $currentPitSkill,
+            ];
         }
 
         $this->saveStats();
     }
 
     private function  calculateChanges() {
+
+        $this->loadStats();
+
         $pitRepChanges = [];
         $pitSkillChanges = [];
     
         foreach ($this->stats as $id => $values) {
             if (count($values['PitRep']) > 1) {
-                $lastRepChange = end($values['PitRep']) - prev($values['PitRep']);
+                $lastRepChange = end($values['PitRep'])['value'] - prev($values['PitRep'])['value'];
                 $pitRepChanges[$id] = $lastRepChange;
             }
     
             if (count($values['PitSkill']) > 1) {
-                $lastSkillChange = end($values['PitSkill']) - prev($values['PitSkill']);
-                $pitSkillChanges[$id] = $lastSkillChange;
+                $lastSkillChange = end($values['PitSkill'])['value'] - prev($values['PitSkill'])['value'];
+                if($lastSkillChange > 1000){
+                    $promotions[] = $id;
+                }else{
+                    $pitSkillChanges[$id] = $lastSkillChange;
+                }
             }
         }
 
+        
         asort($pitRepChanges);
         asort($pitSkillChanges);
-    
+        
         $largestRepIncreases = array_slice($pitRepChanges, -3, 3, true);
         $largestRepDecreases = array_slice($pitRepChanges, 0, 3, true);
         $largestSkillIncreases = array_slice($pitSkillChanges, -3, 3, true);
         $largestSkillDecreases = array_slice($pitSkillChanges, 0, 3, true);
-
+        
         arsort($largestRepIncreases);
         arsort($largestSkillIncreases);
-
+        
         $this->changes = [
             'PitRepIncreases' =>  $largestRepIncreases,
             'PitRepDecreases' => $largestRepDecreases,
             'PitSkillIncreases' => $largestSkillIncreases,
-            'PitSkillDecreases' => $largestSkillDecreases
+            'PitSkillDecreases' => $largestSkillDecreases,
+            'Promotions' => array_unique($promotions),
         ];
     }
 
@@ -158,23 +184,6 @@ class PitskillDataFetcher
     private function saveStats() : void
     {
         file_put_contents('stats.json', json_encode($this->stats));
-    }
-
-    private function sortData() : void
-    {
-        usort($this->drivers, function($a, $b) {
-            if ($a['PitSkill'] == $b['PitSkill']) {
-                return $a['PitRep'] <=> $b['PitRep'];
-            }
-            return $b['PitSkill'] <=> $a['PitSkill'];
-        });
-        
-        // Sort Registrations by 'On Date'
-        usort($this->registrations, function($a, $b) {
-            $dateA = Carbon::createFromFormat('d/m/y H:i', $a['On Date']);
-            $dateB = Carbon::createFromFormat('d/m/y H:i', $b['On Date']);
-            return $dateA <=> $dateB;
-        });
     }
 
     // TODO: Move this to frontend parsing and flow control
@@ -244,7 +253,6 @@ class PitskillDataFetcher
     {
         $this->fetchData();
         $this->calculateChanges();
-        $this->sortData();
 
         $data = [
             'last_update' => Carbon::now(),

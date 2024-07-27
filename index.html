@@ -175,6 +175,25 @@
                                         </v-col>
                                     </v-card>
                                 </v-col>
+
+                                <v-col cols="12" sm="6">
+                                    <v-card class="elevation-4">
+                                        <v-card-title>Promocions</v-card-title>
+                                        <v-col v-for="dId in changes.Promotions" :key="dId" cols="12">
+                                            <v-card class="elevation-4" color="warning">
+                                                <v-card-title class="flex">
+                                                    <v-icon left color="black">mdi-certificate</v-icon>
+                                                    <v-spacer></v-spacer>
+                                                    <div class="text-black" v-html="drivers.find(d=> d['Driver Id'] == dId)['Driver Name']"></div>
+                                                </v-card-title>
+                                            </v-card>
+                                        </v-col>
+
+                                    </v-card>
+                                </v-col>
+
+
+
                             </v-row>
 
 
@@ -374,11 +393,10 @@
                     const pitrep = item.PitRep
                     const pitskill = item.PitSkill
 
-                    if (pitrep < 5) return 'Provisional'
-                    if (pitskill < 1900 || pitrep < 10) return 'Bronze'
-                    if (pitrep >= 10 && pitskill >= 1900) return 'Silver'
-                    if (pitrep >= 15 && pitskill >= 2750) return 'Platinum'
                     if (pitrep >= 20 && pitskill >= 3500) return 'Elite'
+                    if (pitrep >= 15 && pitskill >= 2750) return 'Platinum'
+                    if (pitrep >= 10 && pitskill >= 1900) return 'Silver'
+                    return (pitrep > 5) ? 'Bronze' : 'Provisional'
                 },
 
 

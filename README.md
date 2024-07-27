@@ -15,13 +15,15 @@
 
 ### Next
 
-- Make a Laravel backend
+- Make a Laravel backend [OnWork]
 
 
 ## ChangeLog
 
 ### Unpublished
 
+- Added dates to stats
+- Split promotions and changes in Tops
 - Add hovers for all available fields.
 - Fix stats
 - Avoid duplicates in Ids
