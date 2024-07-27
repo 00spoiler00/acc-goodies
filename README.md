@@ -1,29 +1,19 @@
-# ATotDrap Team PitSkill status
-
-## TODO
-
-### Current
-
-- Add last update of backend
-- Move data json to folder. Create a backup of stats and track it.
-- Stop transforming dates in BE and do it in FE
-- Allow copy server identifier
-- Add lobby tracking
-- Add changelog link
-- Add help icon to install as app
-- Add links to social networks
-
-### Next
-
-- Make a Laravel backend [OnWork]
+# ChangeLog
 
 
-## ChangeLog
+## 20240727
 
-### Unpublished
-
+- **Split promotions and changes in Tops**
+- **Add last update of backend**
+- Add changelog link and changelog
+- Remove paddings to content
 - Added dates to stats
-- Split promotions and changes in Tops
+- Add proper scrolls to dialogs
+- Fix some styling elevations
+
+
+## V 0.2 Improvement Phase 1
+
 - Add hovers for all available fields.
 - Fix stats
 - Avoid duplicates in Ids
@@ -37,7 +27,8 @@
 - Fix license and remove unused columns
 - Remove most backend html and value transformation favoring fe interpretation
 
-### V 0.1 Vuetified
+
+## V 0.1 Vuetified
 
 - Afegides taules dinàmiques per ordenar columnes.
 - Afegits 'tabs' per poder accedir a tota la informació de forma més senzilla.

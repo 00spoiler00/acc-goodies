@@ -9,6 +9,8 @@
     <link href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/vuetify@2.5.10/dist/vuetify.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+
 </head>
 
 <body>
@@ -16,6 +18,7 @@
         <v-app dark>
             <v-main>
                 <v-app-bar app class="elevation-4">
+
                     <v-toolbar-title>
                         <div class="flex items-center justify-center">
                             <a href="https://discord.gg/GFvYkjYbta">
@@ -28,7 +31,16 @@
                             </span>
                         </div>
                     </v-toolbar-title>
+
+                    <v-btn x-small icon @click="showChangeLog()" class="ml-4">
+                        <v-icon color="grey">mdi-update</v-icon>
+                    </v-btn>
+
+
                     <v-spacer></v-spacer>
+                    <small>Actualitzat: {{ timeUntil(lastUpdate) }}</small>
+                    <v-spacer></v-spacer>
+
                     <div class="mr-4 hidden sm:block">
                         <a href="https://www.pitskill.io">
                             <img src='./images/icons/pitskill.png' style="height: 16px" />
@@ -42,6 +54,7 @@
                         color="primary">
                         {{ countdownTime }}
                     </v-progress-circular>
+
                 </v-app-bar>
 
                 <v-tabs v-model="tab">
@@ -57,12 +70,12 @@
                 </v-tabs>
 
                 <v-tabs-items v-model="tab" :touch="{}">
-                    <v-tab-item class="mx-4">
+                    <v-tab-item>
                         <v-card flat>
                             <v-card-title>
                                 <v-text-field v-model="registrationsSearch" label="Cerca registres" append-icon="mdi-magnify" single-line hide-details></v-text-field>
                             </v-card-title>
-                            <v-data-table :mobile-breakpoint="0" :headers="registrationHeaders" :items="filteredRegistrations" class="elevation-4 mt-5" disable-pagination :hide-default-footer="true" dense>
+                            <v-data-table :mobile-breakpoint="0" :headers="registrationHeaders" :items="filteredRegistrations" class="mt-5" disable-pagination :hide-default-footer="true" dense>
                                 <template v-slot:item="props">
                                     <tr class="whitespace-nowrap">
                                         <td>
@@ -116,15 +129,15 @@
                     </v-tab-item>
 
 
-                    <v-tab-item class="mx-4">
+                    <v-tab-item>
                         <v-container class="mt-4">
                             <v-row>
-                                <v-col cols="12" sm="6">
-                                    <v-card class="elevation-4">
+                                <v-col cols="12" sm="6" md="4">
+                                    <v-card flat>
                                         <v-card-title>PitRep</v-card-title>
                                         <v-card-subtitle>Pujant</v-card-subtitle>
                                         <v-col v-for="(value, key) in changes.PitRepIncreases" :key="key" cols="12">
-                                            <v-card class="elevation-4" color="success">
+                                            <v-card color="success">
                                                 <v-card-title class="flex">
                                                     <v-icon left color="white">mdi-arrow-up-bold</v-icon>
                                                     {{ Math.round(parseFloat(value) * 100) / 100 }}
@@ -135,7 +148,7 @@
                                         </v-col>
                                         <v-card-subtitle>Baixant</v-card-subtitle>
                                         <v-col v-for="(value, key) in changes.PitRepDecreases" :key="key" cols="12">
-                                            <v-card class="elevation-4" color="error">
+                                            <v-card color="error">
                                                 <v-card-title class="flex">
                                                     <v-icon left color="white">mdi-arrow-down-bold</v-icon>
                                                     {{ Math.round(parseFloat(value) * 100) / 100 }}
@@ -147,12 +160,12 @@
                                     </v-card>
                                 </v-col>
 
-                                <v-col cols="12" sm="6">
-                                    <v-card class="elevation-4">
+                                <v-col cols="12" sm="6" md="4">
+                                    <v-card flat>
                                         <v-card-title>PitSkill</v-card-title>
                                         <v-card-subtitle>Pujant</v-card-subtitle>
                                         <v-col v-for="(value, key) in changes.PitSkillIncreases" :key="key" cols="12">
-                                            <v-card class="elevation-4" color="success">
+                                            <v-card color="success">
                                                 <v-card-title class="flex">
                                                     <v-icon left color="white">mdi-arrow-up-bold</v-icon>
                                                     {{ Math.round(parseFloat(value) * 10) / 10 }}
@@ -164,7 +177,7 @@
 
                                         <v-card-subtitle>Baixant</v-card-subtitle>
                                         <v-col v-for="(value, key) in changes.PitSkillDecreases" :key="key" cols="12">
-                                            <v-card class="elevation-4" color="error">
+                                            <v-card color="error">
                                                 <v-card-title class="flex">
                                                     <v-icon left color="white">mdi-arrow-down-bold</v-icon>
                                                     {{ Math.round(parseFloat(value) * 10) / 10 }}
@@ -176,15 +189,16 @@
                                     </v-card>
                                 </v-col>
 
-                                <v-col cols="12" sm="6">
-                                    <v-card class="elevation-4">
+                                <v-col cols="12" sm="6" md="4">
+                                    <v-card flat>
                                         <v-card-title>Promocions</v-card-title>
+                                        <v-card-subtitle>Noves llicències</v-card-subtitle>
                                         <v-col v-for="dId in changes.Promotions" :key="dId" cols="12">
-                                            <v-card class="elevation-4" color="warning">
+                                            <v-card color="warning">
                                                 <v-card-title class="flex">
-                                                    <v-icon left color="black">mdi-certificate</v-icon>
+                                                    <v-icon left color="white">mdi-certificate</v-icon>
                                                     <v-spacer></v-spacer>
-                                                    <div class="text-black" v-html="drivers.find(d=> d['Driver Id'] == dId)['Driver Name']"></div>
+                                                    <div class="text-white" v-html="drivers.find(d=> d['Driver Id'] == dId)['Driver Name']"></div>
                                                 </v-card-title>
                                             </v-card>
                                         </v-col>
@@ -200,12 +214,12 @@
                         </v-container>
                     </v-tab-item>
 
-                    <v-tab-item class="mx-4">
+                    <v-tab-item>
                         <v-card flat>
                             <v-card-title>
                                 <v-text-field v-model="driversSearch" label="Cerca pilots" append-icon="mdi-magnify" single-line hide-details></v-text-field>
                             </v-card-title>
-                            <v-data-table :mobile-breakpoint="0" :headers="headers" :items="filteredDrivers" class="elevation-4" disable-pagination :hide-default-footer="true">
+                            <v-data-table :mobile-breakpoint="0" :headers="headers" :items="filteredDrivers" disable-pagination :hide-default-footer="true">
                                 <template v-slot:item="props">
                                     <tr>
                                         <td>
@@ -251,13 +265,17 @@
                 <v-dialog v-model="isDialogOpen" max-width="800">
                     <v-card v-if="dialogData">
                         <v-card-title>
-                            {{dialogMode}}
+                            {{ dialogMode }}
                             <v-spacer></v-spacer>
                             <v-btn icon @click="isDialogOpen = false">
                                 <v-icon>mdi-close</v-icon>
                             </v-btn>
                         </v-card-title>
-                        <v-card-text>
+
+
+                        <v-card-text class="overflow-y-auto" style="max-height: 80dvh;">
+
+                            <div class="markdown-content" v-if="['ChangeLog'].includes(dialogMode)" v-html="dialogData"></div>
 
                             <v-img v-if="['Circuit Image'].includes(dialogMode)" :src="'https://cdn.pitskill.io/public/TrackPhoto-' + dialogData"></v-img>
 
@@ -267,7 +285,7 @@
 
                             <v-template v-if="['Server'].includes(dialogMode)">
                                 <div class="font-bold">Detalls del servidor</div>
-                                <div>{{dialogData}}</div>
+                                <div>{{ dialogData }}</div>
                             </v-template>
 
                             <v-template v-if="['PitSkill', 'PitRep'].includes(dialogMode)">
@@ -278,8 +296,10 @@
                                 </v-sparkline>
                             </v-template>
                         </v-card-text>
+
                     </v-card>
                 </v-dialog>
+
 
 
             </v-main>
@@ -290,6 +310,7 @@
     <script src="https://cdn.jsdelivr.net/npm/vuetify@2.5.10/dist/vuetify.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/min/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/locale/ca.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
 
     <script>
@@ -345,6 +366,7 @@
                 },
                 countdownValue: 100,
                 countdownTime: 10,
+                lastUpdate: 0,
 
                 dialogData: null,
                 dialogMode: null,
@@ -380,6 +402,7 @@
                             this.drivers = data.drivers.data
                             this.registrations = data.registrations.data
                             this.changes = data.changes
+                            this.lastUpdate = data.lastUpdate
                         })
                         .catch(error => console.error('Error fetching data:', error))
                 },
@@ -420,7 +443,15 @@
                     this.dialogData = data
                     this.dialogMode = mode
                     this.isDialogOpen = true
-                }
+                },
+
+                showChangeLog() {
+                    fetch('./README.md')
+                        .then(response => response.text())
+                        .then(data => this.openDialog('ChangeLog', marked.parse(data)))
+                        .catch(error => console.error('Error fetching data:', error))
+                },
+
             },
             beforeDestroy() {
                 clearInterval(this.interval)
