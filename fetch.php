@@ -123,7 +123,12 @@ class PitskillDataFetcher
             if(!$exists){
                 // Notify 
                 $sof = intval($registration['Server SoF']);
-                $message = "**{$registration['Driver']}** s'ha apuntat a [{$registration['Upcoming Event']}](<https://pitskill.io/event/{$registration['Enroll Link']}>) *@{$registration['On Date']}* ({$sof} SoF, {$registration['Registration']} pilots)";
+                $localDrivers = collect($this->registrations)
+                    ->filter(fn($r) => $r['Enroll Link'] == $registration['Enroll Link'])
+                    ->map(fn($r) => $r['Driver'])
+                    ->join(',')
+                ;
+                $message = "**{$registration['Driver']}** s'ha apuntat a [{$registration['Upcoming Event']}](<https://pitskill.io/event/{$registration['Enroll Link']}>) *@{$registration['On Date']}* ({$sof} SoF, {$registration['Registration']} pilots) [{$localDrivers}]";
                 $this->sendDiscordMessage($message);
                 // And add to the notifieds
                 $notifications[] = [
@@ -289,7 +294,9 @@ class PitskillDataFetcher
     }
 
     private function sendDiscordMessage(string $message) {
+        // Marc
         // $webhookUrl = 'https://discord.com/api/webhooks/1266792058228834315/eSDfbXpG-c2GHxcLFyEVlf-kDKr67dKghu5fLRyOB5C9JniAW-pKHPsA3tP59f2K075c';
+        // ATotDrap 
         $webhookUrl = 'https://discord.com/api/webhooks/1266833272697262112/SgaD33o4eRmwmWRa0xG3fChIRgnK4_Y-Jz4hhml0jArIZSlGFOVlIRZfvAwkS5EvwxdG';
         $data = json_encode(["content" => $message]);        
         $ch = curl_init($webhookUrl);

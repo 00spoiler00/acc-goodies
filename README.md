@@ -5,6 +5,7 @@
 - Add Discord channel webhook registration notification system and data model
 - Remove link previews from discord messages
 - Adjust toolbar responsive behavior
+- Add drivers info to subscription message
 
 ## 20240727
 
