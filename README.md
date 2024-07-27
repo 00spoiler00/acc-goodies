@@ -3,6 +3,8 @@
 ## 202407271
 
 - Add Discord channel webhook registration notification system and data model
+- Remove link previews from discord messages
+- Adjust toolbar responsive behavior
 
 ## 20240727
 

@@ -123,7 +123,7 @@ class PitskillDataFetcher
             if(!$exists){
                 // Notify 
                 $sof = intval($registration['Server SoF']);
-                $message = "**{$registration['Driver']}** s'ha apuntat a [{$registration['Upcoming Event']}](https://pitskill.io/event/{$registration['Enroll Link']}) *@{$registration['On Date']}* ({$sof} SoF, {$registration['Registration']} pilots)";
+                $message = "**{$registration['Driver']}** s'ha apuntat a [{$registration['Upcoming Event']}](<https://pitskill.io/event/{$registration['Enroll Link']}>) *@{$registration['On Date']}* ({$sof} SoF, {$registration['Registration']} pilots)";
                 $this->sendDiscordMessage($message);
                 // And add to the notifieds
                 $notifications[] = [

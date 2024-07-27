@@ -9,8 +9,6 @@
     <link href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/vuetify@2.5.10/dist/vuetify.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-
-
 </head>
 
 <body>
@@ -19,6 +17,7 @@
             <v-main>
                 <v-app-bar app class="elevation-4">
 
+                    <!-- This should stick to the left -->
                     <v-toolbar-title>
                         <div class="flex items-center justify-center">
                             <a href="https://discord.gg/GFvYkjYbta">
@@ -26,34 +25,45 @@
                                     <v-img src='./images/icons/android-chrome-192x192.png' />
                                 </v-avatar>
                             </a>
-                            <span class="ml-4 font-bold">
+                            <span class="ml-4 font-bold hidden sm:block">
                                 PitSkill A Tot Drap
                             </span>
                         </div>
                     </v-toolbar-title>
 
-                    <v-btn x-small icon @click="showChangeLog()" class="ml-4">
-                        <v-icon color="grey">mdi-update</v-icon>
-                    </v-btn>
-
-
                     <v-spacer></v-spacer>
+
+
+                    <!-- This should be in the center -->
                     <small>Actualitzat: {{ timeUntil(lastUpdate) }}</small>
+
                     <v-spacer></v-spacer>
+
+
+                    <!-- This should be grouped with next section (v-btn and v-progress-circular) and everything be sticked to the right -->
 
                     <div class="mr-4 hidden sm:block">
                         <a href="https://www.pitskill.io">
                             <img src='./images/icons/pitskill.png' style="height: 16px" />
                         </a>
                     </div>
-                    <v-progress-circular
-                        :rotate="-90"
-                        :size="40"
-                        :width="4"
-                        :value="countdownValue"
-                        color="primary">
-                        {{ countdownTime }}
-                    </v-progress-circular>
+
+                    <!-- This should be sticked to the right and keep this vertical disposition as is -->
+                    <div class="flex flex-col items-end">
+                        <v-btn x-small icon @click="showChangeLog()" class="mb-2">
+                            <v-icon color="primary">mdi-file-document-outline</v-icon>
+                        </v-btn>
+
+                        <v-progress-circular
+                            :rotate="-90"
+                            :size="12"
+                            :width="6"
+                            :value="countdownValue"
+                            color="primary"
+                            class="mr-1">
+                            <!-- <small>{{ countdownTime }}</small> -->
+                        </v-progress-circular>
+                    </div>
 
                 </v-app-bar>
 
