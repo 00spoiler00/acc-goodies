@@ -2,6 +2,7 @@
 
 ## 20240729
 
+- **Add HotLap section**
 - Reorder Tops sections
 - Create a HotLapResults parser
 - Detect PitRep promotions

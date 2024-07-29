@@ -77,6 +77,9 @@
                     <v-tab>
                         Ranking
                     </v-tab>
+                    <v-tab>
+                        HotLaps
+                    </v-tab>
                 </v-tabs>
 
                 <v-tabs-items v-model="tab" :touch="{}">
@@ -137,7 +140,6 @@
                             </v-data-table>
                         </v-card>
                     </v-tab-item>
-
 
                     <v-tab-item>
                         <v-container class="mt-4">
@@ -228,7 +230,7 @@
                             <v-card-title>
                                 <v-text-field v-model="driversSearch" label="Cerca pilots" append-icon="mdi-magnify" single-line hide-details></v-text-field>
                             </v-card-title>
-                            <v-data-table :mobile-breakpoint="0" :headers="headers" :items="filteredDrivers" disable-pagination :hide-default-footer="true">
+                            <v-data-table :mobile-breakpoint="0" :headers="driverHeaders" :items="filteredDrivers" disable-pagination :hide-default-footer="true">
                                 <template v-slot:item="props">
                                     <tr>
                                         <td>
@@ -267,6 +269,34 @@
 
                         </v-card>
                     </v-tab-item>
+
+                    <v-tab-item>
+
+                        <v-card-title>
+                            <small>Millors voltes del server ATOTDRAP 00 Ps Hotlap BoP</small>
+                        </v-card-title>
+
+                        <v-card-title>
+                            <v-select v-model="hotlapTrack" :items="hotlapTracks" label="Circuit" append-icon="mdi-magnify" hide-details />
+                        </v-card-title>
+
+                        <v-card flat>
+                            <v-data-table :mobile-breakpoint="0" :headers="hotlapHeaders" :items="filteredHotlaps" disable-pagination :hide-default-footer="true" :sort-by.sync="hotlapSortField"
+                                :sort-desc.sync="hotlapSortDesc">
+                                <template v-slot:item="props">
+                                    <tr>
+                                        <td v-html="props.item['Driver']"></td>
+                                        <td v-html="formatLaptime(props.item['Laptime'])"></td>
+                                        <!-- <td v-html="props.item['Car']"></td> -->
+                                        <td v-html="props.item['Date']"></td>
+                                    </tr>
+                                </template>
+                            </v-data-table>
+
+                        </v-card>
+                    </v-tab-item>
+
+
                 </v-tabs-items>
                 </v-tabs>
 
@@ -349,7 +379,7 @@
                 registrationsSearch: '',
                 progress: 100,
                 interval: null,
-                headers: [
+                driverHeaders: [
                     { text: '', align: 'start', sortable: false, value: 'Image' },
                     { text: 'Pilot', value: 'Driver Name' },
                     { text: 'Llicència', value: 'Licence' },
@@ -365,6 +395,16 @@
                     { text: 'Cotxe', value: 'Car' },
                     { text: 'Circuit', value: 'Track' },
                 ],
+                hotlapHeaders: [
+                    { text: 'Pilot', value: 'Driver' },
+                    { text: 'Temps', value: 'Laptime' },
+                    // { text: 'Cotxe', value: 'Car' },
+                    { text: 'Data', value: 'Date' },
+                ],
+
+                hotlapSortField: 'Laptime',
+                hotlapSortDesc: false,
+
                 drivers: [],
                 registrations: [],
                 changes: {
@@ -380,8 +420,13 @@
                 dialogData: null,
                 dialogMode: null,
                 isDialogOpen: false,
+
+                hotlaps: [],
+                hotlapTracks: [],
+                hotlapTrack: null,
             }),
             computed: {
+
                 filteredDrivers() {
                     return this.drivers.filter(driver => {
                         const searchTerm = this.driversSearch.toLowerCase()
@@ -390,6 +435,7 @@
                         )
                     })
                 },
+
                 filteredRegistrations() {
                     return this.registrations.filter(registration => {
                         const searchTerm = this.registrationsSearch.toLowerCase()
@@ -398,13 +444,22 @@
                         )
                     })
                 },
+
+                filteredHotlaps() {
+                    return this.hotlaps[this.hotlapTrack]
+                },
+
             },
+
             created() {
                 this.fetchData()
                 this.startCountdown()
             },
+
             methods: {
+
                 fetchData() {
+
                     fetch('./data.json')
                         .then(response => response.json())
                         .then(data => {
@@ -412,6 +467,20 @@
                             this.registrations = data.registrations.data
                             this.changes = data.changes
                             this.lastUpdate = data.lastUpdate
+                        })
+                        .catch(error => console.error('Error fetching data:', error))
+
+                    fetch('./hotlaps.json')
+                        .then(response => response.json())
+                        .then(data => {
+                            this.hotlaps = data
+                            this.hotlapTracks = Object.keys(data).map(track => ({
+                                text: track.toLowerCase().split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(''),
+                                value: track
+                            }))
+                            if (!this.hotlapTrack) {
+                                this.hotlapTrack = this.hotlapTracks[0].value
+                            }
                         })
                         .catch(error => console.error('Error fetching data:', error))
                 },
@@ -431,9 +500,14 @@
                     return (pitrep > 5) ? 'Bronze' : 'Provisional'
                 },
 
-
                 timeUntil(dateString) {
                     return moment(dateString, "DD/MM/YY HH:mm").fromNow()
+                },
+
+                formatLaptime(ms) {
+                    const minutes = Math.floor(ms / 60000);
+                    const seconds = ((ms % 60000) / 1000).toFixed(3);
+                    return `${minutes}:${seconds.padStart(6, '0')}`;
                 },
 
                 startCountdown() {
@@ -462,9 +536,11 @@
                 },
 
             },
+
             beforeDestroy() {
                 clearInterval(this.interval)
             },
+
         })
     </script>
 </body>
