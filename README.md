@@ -4,6 +4,7 @@
 
 - Reorder Tops sections
 - Create a HotLapResults parser
+- Detect PitRep promotions
 
 ## 202407271
 

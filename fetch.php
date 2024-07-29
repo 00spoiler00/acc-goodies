@@ -184,7 +184,11 @@ class PitskillDataFetcher
         foreach ($this->stats as $id => $values) {
             if (count($values['PitRep']) > 1) {
                 $lastRepChange = end($values['PitRep'])['value'] - prev($values['PitRep'])['value'];
-                $pitRepChanges[$id] = $lastRepChange;
+                if($lastRepChange > 5){
+                    $promotions[] = $id;
+                }else{
+                    $pitRepChanges[$id] = $lastRepChange;
+                }
             }
     
             if (count($values['PitSkill']) > 1) {
@@ -328,7 +332,7 @@ class PitskillDataFetcher
                 'data' => $this->registrations,
             ],
             'changes' => $this->changes,
-            'lastUpdate' => $this->transformDate(Carbon::now(), 'd/m/y H:i'),
+            'lastUpdate' => $this->transformDate(Carbon::now(), 'd/m/y H:i:s'),
         ];
 
         file_put_contents('data.json', json_encode($data));
