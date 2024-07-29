@@ -142,6 +142,24 @@
                     <v-tab-item>
                         <v-container class="mt-4">
                             <v-row>
+
+                                <v-col cols="12" sm="6" md="4">
+                                    <v-card flat>
+                                        <v-card-title>Promocions</v-card-title>
+                                        <v-card-subtitle>Noves llicències</v-card-subtitle>
+                                        <v-col v-for="dId in changes.Promotions" :key="dId" cols="12">
+                                            <v-card color="warning">
+                                                <v-card-title class="flex">
+                                                    <v-icon left color="white">mdi-certificate</v-icon>
+                                                    <v-spacer></v-spacer>
+                                                    <div class="text-white" v-html="drivers.find(d=> d['Driver Id'] == dId)['Driver Name']"></div>
+                                                </v-card-title>
+                                            </v-card>
+                                        </v-col>
+                                    </v-card>
+                                </v-col>
+
+
                                 <v-col cols="12" sm="6" md="4">
                                     <v-card flat>
                                         <v-card-title>PitRep</v-card-title>
@@ -198,25 +216,6 @@
                                         </v-col>
                                     </v-card>
                                 </v-col>
-
-                                <v-col cols="12" sm="6" md="4">
-                                    <v-card flat>
-                                        <v-card-title>Promocions</v-card-title>
-                                        <v-card-subtitle>Noves llicències</v-card-subtitle>
-                                        <v-col v-for="dId in changes.Promotions" :key="dId" cols="12">
-                                            <v-card color="warning">
-                                                <v-card-title class="flex">
-                                                    <v-icon left color="white">mdi-certificate</v-icon>
-                                                    <v-spacer></v-spacer>
-                                                    <div class="text-white" v-html="drivers.find(d=> d['Driver Id'] == dId)['Driver Name']"></div>
-                                                </v-card-title>
-                                            </v-card>
-                                        </v-col>
-
-                                    </v-card>
-                                </v-col>
-
-
 
                             </v-row>
 

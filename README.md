@@ -1,5 +1,10 @@
 # ChangeLog
 
+## 20240729
+
+- Reorder Tops sections
+- Create a HotLapResults parser
+
 ## 202407271
 
 - Add Discord channel webhook registration notification system and data model
