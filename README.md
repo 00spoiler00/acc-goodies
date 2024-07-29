@@ -6,6 +6,7 @@
 - Reorder Tops sections
 - Create a HotLapResults parser
 - Detect PitRep promotions
+- Add icons an proper responsive tabs
 
 ## 202407271
 
