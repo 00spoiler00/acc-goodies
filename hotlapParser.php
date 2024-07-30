@@ -43,6 +43,7 @@ class HotlapProcessor
         $files = glob(self::$directory . '/*.json');
         foreach ($files as $file) {
             self::processFile($file);
+            unlink($file);
         }
     }
 
@@ -212,5 +213,10 @@ class HotlapProcessor
     }
 }
 
-// Run the Hotlap Processor
-HotlapProcessor::run();
+// Run the Hotlap Processor with error logging
+try {
+    HotlapProcessor::run();
+} catch (Exception $e) {
+    error_log("Error in HotlapProcessor: " . $e->getMessage(), 3, 'error.log');
+    error_log("Stack trace: " . $e->getTraceAsString(), 3, 'error.log');
+}

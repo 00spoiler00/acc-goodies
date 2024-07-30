@@ -6,7 +6,70 @@
             "Category": "GT3",
             "DriverId": "S76561198085652399",
             "Driver": "Marc Boada",
-            "Laptime": 89272,
+            "Laptime": 88520,
+            "Date": "2024-07-30"
+        },
+        {
+            "CarId": 32,
+            "CarModel": "Ferrari 296 GT3",
+            "Category": "GT3",
+            "DriverId": "S76561199179342035",
+            "Driver": "Carles Povill",
+            "Laptime": 89447,
+            "Date": "2024-07-30"
+        },
+        {
+            "CarId": 34,
+            "CarModel": "Porsche 992 GT3 R",
+            "Category": "GT3",
+            "DriverId": "S76561199179342035",
+            "Driver": "Carles Povill",
+            "Laptime": 90585,
+            "Date": "2024-07-30"
+        },
+        {
+            "CarId": 36,
+            "CarModel": "Ford Mustang GT3",
+            "Category": "GT3",
+            "DriverId": "S76561199179342035",
+            "Driver": "Carles Povill",
+            "Laptime": 89197,
+            "Date": "2024-07-30"
+        },
+        {
+            "CarId": 34,
+            "CarModel": "Porsche 992 GT3 R",
+            "Category": "GT3",
+            "DriverId": "S76561199446710049",
+            "Driver": "Jordi Navarro",
+            "Laptime": 89625,
+            "Date": "2024-07-30"
+        },
+        {
+            "CarId": 30,
+            "CarModel": "BMW M4 GT3",
+            "Category": "GT3",
+            "DriverId": "S76561198013482736",
+            "Driver": "JESUS GONZALEZ",
+            "Laptime": 90405,
+            "Date": "2024-07-30"
+        },
+        {
+            "CarId": 36,
+            "CarModel": "Ford Mustang GT3",
+            "Category": "GT3",
+            "DriverId": "S76561198299526897",
+            "Driver": "Carles Figuera",
+            "Laptime": 91700,
+            "Date": "2024-07-30"
+        },
+        {
+            "CarId": 30,
+            "CarModel": "BMW M4 GT3",
+            "Category": "GT3",
+            "DriverId": "S76561199047681238",
+            "Driver": "Eloi Rodriguez",
+            "Laptime": 88582,
             "Date": "2024-07-30"
         }
     ]

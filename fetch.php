@@ -341,9 +341,11 @@ class PitskillDataFetcher
 }
 
 try {
-    print "Updating data!".PHP_EOL;
+    print "Updating data...";
     (new PitskillDataFetcher())->run();
-    print "Updated data!".PHP_EOL;
-} catch (\Throwable $th) {
-    print_r($th->getMessage());
+    print "Done!".PHP_EOL;
+    } catch (\Throwable $th) {
+} catch (Exception $e) {
+    error_log("Error in Fetch: " . $e->getMessage(), 3, 'error.log');
+    error_log("Stack trace: " . $e->getTraceAsString(), 3, 'error.log');
 }

@@ -2,6 +2,7 @@
 
 ## 20240730
 
+- Add safe logged execution of fetchers and parsers
 - Add categories and car models to hotlaps parser and report
 - Add frontend <> backend version control and removed auto reload
 
