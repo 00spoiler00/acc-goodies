@@ -333,6 +333,7 @@ class PitskillDataFetcher
             ],
             'changes' => $this->changes,
             'lastUpdate' => $this->transformDate(Carbon::now(), 'd/m/y H:i:s'),
+            'version' => 2,
         ];
 
         file_put_contents('data.json', json_encode($data));

@@ -1,32 +1,13 @@
 {
     "red_bull_ring": [
         {
-            "Car": 1001,
-            "DriverId": "S76561198353290370",
-            "Driver": "Jordi Audet",
-            "Laptime": 90195,
-            "Date": "2024-07-25"
-        },
-        {
-            "Car": 1001,
+            "CarId": 32,
+            "CarModel": "Ferrari 296 GT3",
+            "Category": "GT3",
             "DriverId": "S76561198085652399",
             "Driver": "Marc Boada",
-            "Laptime": 88775,
-            "Date": "2024-07-27"
-        },
-        {
-            "Car": 1001,
-            "DriverId": "S76561199440878393",
-            "Driver": "Mark Vence",
-            "Laptime": 92115,
-            "Date": "2024-07-27"
-        },
-        {
-            "Car": 1001,
-            "DriverId": "S76561199188154057",
-            "Driver": "Joan Castillo",
-            "Laptime": 90560,
-            "Date": "2024-07-27"
+            "Laptime": 89272,
+            "Date": "2024-07-30"
         }
     ]
 }

@@ -275,23 +275,40 @@
                     </v-tab-item>
 
                     <v-tab-item>
-
-                        <v-card-title>
-                            <small>Millors voltes del server ATOTDRAP 00 Ps Hotlap BoP</small>
-                        </v-card-title>
-
-                        <v-card-title>
-                            <v-select v-model="hotlapTrack" :items="hotlapTracks" label="Circuit" append-icon="mdi-magnify" hide-details />
-                        </v-card-title>
-
                         <v-card flat>
+
+                            <v-card-title>
+                                <small>Hotlaps del <i><b>ATOTDRAP 00 Ps Hotlap BoP</b></i></small>
+                            </v-card-title>
+
+                            <v-card-title>
+                                <v-row>
+                                    <v-col cols="12" sm="6">
+                                        <v-select
+                                            v-model="hotlapTrack"
+                                            :items="hotlapTracks"
+                                            label="Circuit"
+                                            hide-details />
+                                    </v-col>
+                                    <v-col cols="12" sm="6">
+                                        <v-select
+                                            v-model="hotlapCategoriesSelected"
+                                            :items="hotlapCategories"
+                                            label="Categoria"
+                                            hide-details
+                                            multiple />
+                                    </v-col>
+                                </v-row>
+                            </v-card-title>
+
                             <v-data-table :mobile-breakpoint="0" :headers="hotlapHeaders" :items="filteredHotlaps" disable-pagination :hide-default-footer="true" :sort-by.sync="hotlapSortField"
                                 :sort-desc.sync="hotlapSortDesc">
                                 <template v-slot:item="props">
                                     <tr>
+                                        <td v-html="props.item['Category']"></td>
                                         <td v-html="props.item['Driver']"></td>
                                         <td v-html="formatLaptime(props.item['Laptime'])"></td>
-                                        <!-- <td v-html="props.item['Car']"></td> -->
+                                        <td v-html="props.item['CarModel']"></td>
                                         <td v-html="props.item['Date']"></td>
                                     </tr>
                                 </template>
@@ -400,9 +417,10 @@
                     { text: 'Circuit', value: 'Track' },
                 ],
                 hotlapHeaders: [
+                    { text: 'Categoria', value: 'Category' },
                     { text: 'Pilot', value: 'Driver' },
                     { text: 'Temps', value: 'Laptime' },
-                    // { text: 'Cotxe', value: 'Car' },
+                    { text: 'Cotxe', value: 'CarModel' },
                     { text: 'Data', value: 'Date' },
                 ],
 
@@ -427,6 +445,8 @@
 
                 hotlaps: [],
                 hotlapTracks: [],
+                hotlapCategories: ['GT2', 'GT3', 'GT4', 'GTC', 'TCX'],
+                hotlapCategoriesSelected: ['GT2', 'GT3', 'GT4', 'GTC', 'TCX'],
                 hotlapTrack: null,
             }),
             computed: {
@@ -450,7 +470,8 @@
                 },
 
                 filteredHotlaps() {
-                    return this.hotlaps[this.hotlapTrack]
+                    hotlaps = this.hotlaps[this.hotlapTrack]
+                    return hotlaps ? hotlaps.filter(hl => this.hotlapCategoriesSelected.includes(hl.Category)) : []
                 },
 
             },
@@ -467,6 +488,13 @@
                     fetch('./data.json')
                         .then(response => response.json())
                         .then(data => {
+
+                            const specifiedVersion = 2
+                            if (data.version > specifiedVersion) {
+                                window.location.reload()
+                                return
+                            }
+
                             this.drivers = data.drivers.data
                             this.registrations = data.registrations.data
                             this.changes = data.changes

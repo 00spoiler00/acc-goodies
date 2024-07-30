@@ -1,5 +1,10 @@
 # ChangeLog
 
+## 20240730
+
+- Add categories and car models to hotlaps parser and report
+- Add frontend <> backend version control and removed auto reload
+
 ## 20240729
 
 - **Add HotLap section**
