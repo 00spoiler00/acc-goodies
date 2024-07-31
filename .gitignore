@@ -2,3 +2,6 @@ vendor
 data.json
 .password
 results
+error.log
+notifications.json
+access.log

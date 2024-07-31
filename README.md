@@ -1,5 +1,10 @@
 # ChangeLog
 
+## 20240731
+
+- Unify hotlap and fetch. 
+- Add logging
+
 ## 20240730
 
 - Add safe logged execution of fetchers and parsers
