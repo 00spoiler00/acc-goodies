@@ -44,7 +44,7 @@ class PitskillDataFetcher
 
     private function fetchData() : void
     {
-        $this->ids = json_decode(file_get_contents('ids.json'));
+        $this->ids = json_decode(file_get_contents('data/ids.json'));
         
         $this->loadStats();
 
@@ -105,7 +105,7 @@ class PitskillDataFetcher
     private function sendRegistrationNotifications()
     {
         // Get the notified registrations data
-        $notifications = json_decode(file_get_contents('notifications.json'), true);
+        $notifications = json_decode(file_get_contents('data/notifications.json'), true);
         $notifications = collect($notifications);
 
         // For each current registrations
@@ -143,7 +143,7 @@ class PitskillDataFetcher
           $notifications = $notifications->slice(-100);
     
           // Save the notifications
-          file_put_contents('notifications.json', json_encode($notifications->toArray()));
+          file_put_contents('data/notifications.json', json_encode($notifications->toArray()));
     }
 
     private function createStats(int $id, array $data) : void
@@ -225,14 +225,14 @@ class PitskillDataFetcher
 
     private function loadStats() : void
     {
-        if (file_exists('stats.json')) {
-            $this->stats = json_decode(file_get_contents('stats.json'), true);
+        if (file_exists('data/stats.json')) {
+            $this->stats = json_decode(file_get_contents('data/stats.json'), true);
         }
     }
 
     private function saveStats() : void
     {
-        file_put_contents('stats.json', json_encode($this->stats));
+        file_put_contents('data/stats.json', json_encode($this->stats));
     }
 
     // TODO: Move this to frontend parsing and flow control
@@ -337,13 +337,13 @@ class PitskillDataFetcher
             'version' => 2,
         ];
 
-        file_put_contents('data.json', json_encode($data));
+        file_put_contents('data/data.json', json_encode($data));
     }
 }
 
 class HotlapProcessor
 {
-    private static $directory = './results';
+    private static $directory = '/home/marc/accServers/acc-server-00/results';
     private static $trackResults;
     private static $pilotDetails;
 
@@ -359,15 +359,15 @@ class HotlapProcessor
 
     private static function loadExistingData()
     {
-        if (file_exists('drivers.json')) {
-            $existingDrivers = json_decode(file_get_contents('drivers.json'), true);
+        if (file_exists('data/drivers.json')) {
+            $existingDrivers = json_decode(file_get_contents('data/drivers.json'), true);
             if ($existingDrivers) {
                 self::$pilotDetails = collect($existingDrivers);
             }
         }
 
-        if (file_exists('hotlaps.json')) {
-            $existingHotlaps = json_decode(file_get_contents('hotlaps.json'), true);
+        if (file_exists('data/hotlaps.json')) {
+            $existingHotlaps = json_decode(file_get_contents('data/hotlaps.json'), true);
             if ($existingHotlaps) {
                 self::$trackResults = collect($existingHotlaps);
             }
@@ -377,9 +377,11 @@ class HotlapProcessor
     private static function processFiles()
     {
         $files = glob(self::$directory . '/*.json');
+        error_log("Processing files...".PHP_EOL, 3, 'logs/access.log');
         foreach ($files as $file) {
+            error_log($file.PHP_EOL, 3, 'logs/access.log');
             self::processFile($file);
-            unlink($file);
+            // unlink($file);
         }
     }
 
@@ -544,24 +546,23 @@ class HotlapProcessor
     
     private static function saveData()
     {
-        file_put_contents('hotlaps.json', self::$trackResults->toJson(JSON_PRETTY_PRINT));
-        file_put_contents('drivers.json', self::$pilotDetails->toJson(JSON_PRETTY_PRINT));
+        file_put_contents('data/hotlaps.json', self::$trackResults->toJson(JSON_PRETTY_PRINT));
+        file_put_contents('data/drivers.json', self::$pilotDetails->toJson(JSON_PRETTY_PRINT));
     }
 }
 
 // Run the Hotlap Processor with error logging
 try {
 
-    error_log("Updating data...", 3, 'access.log');
+    error_log("Updating data...", 3, 'logs/access.log');
     (new PitskillDataFetcher())->run();
-    error_log("Done!" . PHP_EOL, 3, 'access.log');
+    error_log("Done!" . PHP_EOL, 3, 'logs/access.log');
 
-    error_log("Processing hotlaps data...", 3, 'access.log');
+    error_log("Processing hotlaps data...", 3, 'logs/access.log');
     HotlapProcessor::run();
-    error_log("Done!" . PHP_EOL, 3, 'access.log');
-    
+    error_log("Done!" . PHP_EOL, 3, 'logs/access.log');
 
 } catch (Exception $e) {
-    error_log("Error in HotlapProcessor: " . $e->getMessage() . PHP_EOL, 3, 'error.log');
-    error_log("Stack trace: " . $e->getTraceAsString() . PHP_EOL, 3, 'error.log');
+    error_log("Error in HotlapProcessor: " . $e->getMessage() . PHP_EOL, 3, 'logs/error.log');
+    error_log("Stack trace: " . $e->getTraceAsString() . PHP_EOL, 3, 'logs/error.log');
 }

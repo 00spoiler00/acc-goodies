@@ -71,6 +71,15 @@
             "Driver": "Eloi Rodriguez",
             "Laptime": 88582,
             "Date": "2024-07-30"
+        },
+        {
+            "CarId": 35,
+            "CarModel": "McLaren 720S GT3 Evo",
+            "Category": "GT3",
+            "DriverId": "S76561198350960275",
+            "Driver": "Roge Lorente",
+            "Laptime": 87985,
+            "Date": "2024-07-31"
         }
     ]
 }

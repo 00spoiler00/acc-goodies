@@ -1,7 +1,6 @@
 vendor
-data.json
 .password
 results
-error.log
-notifications.json
-access.log
+logs
+data/data.json
+data/notifications.json

@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
 
-$jsonFile = 'ids.json';
+$jsonFile = 'data/ids.json';
 $data = json_decode(file_get_contents($jsonFile), true);
 $password = file_get_contents('.password');
 

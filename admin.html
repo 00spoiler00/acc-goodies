@@ -51,7 +51,7 @@
             },
             methods: {
                 fetchIds() {
-                    fetch('ids.json')
+                    fetch('data/ids.json')
                         .then(response => response.json())
                         .then(data => this.ids = data);
                 },
