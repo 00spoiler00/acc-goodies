@@ -6,8 +6,8 @@
             "Category": "GT3",
             "DriverId": "S76561198085652399",
             "Driver": "Marc Boada",
-            "Laptime": 88520,
-            "Date": "2024-07-30"
+            "Laptime": 88292,
+            "Date": "2024-07-31"
         },
         {
             "CarId": 32,
@@ -33,8 +33,8 @@
             "Category": "GT3",
             "DriverId": "S76561199179342035",
             "Driver": "Carles Povill",
-            "Laptime": 89197,
-            "Date": "2024-07-30"
+            "Laptime": 88762,
+            "Date": "2024-07-31"
         },
         {
             "CarId": 34,
@@ -79,6 +79,24 @@
             "DriverId": "S76561198350960275",
             "Driver": "Roge Lorente",
             "Laptime": 87985,
+            "Date": "2024-07-31"
+        },
+        {
+            "CarId": 36,
+            "CarModel": "Ford Mustang GT3",
+            "Category": "GT3",
+            "DriverId": "S76561198445932095",
+            "Driver": "David Botello",
+            "Laptime": 89222,
+            "Date": "2024-07-31"
+        },
+        {
+            "CarId": 32,
+            "CarModel": "Ferrari 296 GT3",
+            "Category": "GT3",
+            "DriverId": "S76561199651530367",
+            "Driver": "Carles LG",
+            "Laptime": 89735,
             "Date": "2024-07-31"
         }
     ]

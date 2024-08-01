@@ -381,7 +381,7 @@ class HotlapProcessor
         foreach ($files as $file) {
             error_log($file.PHP_EOL, 3, 'logs/access.log');
             self::processFile($file);
-            // unlink($file);
+            unlink($file);
         }
     }
 
