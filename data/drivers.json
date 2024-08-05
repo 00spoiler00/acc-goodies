@@ -58,5 +58,40 @@
         "firstName": "Carles",
         "lastName": "LG",
         "shortName": "CLG"
+    },
+    "S76561198025113568": {
+        "firstName": "JOAN",
+        "lastName": "ESTEVE",
+        "shortName": "JEG"
+    },
+    "S76561198109408222": {
+        "firstName": "Carlos",
+        "lastName": "Jimenez",
+        "shortName": "CJD"
+    },
+    "S76561197966264308": {
+        "firstName": "David",
+        "lastName": "Guerra",
+        "shortName": "DGA"
+    },
+    "S76561199003188470": {
+        "firstName": "David",
+        "lastName": "Mula",
+        "shortName": "MUL"
+    },
+    "S76561198271730696": {
+        "firstName": "Iban",
+        "lastName": "Vil\u00e0",
+        "shortName": "IVM"
+    },
+    "S76561199115318422": {
+        "firstName": "Ram\u00f3n",
+        "lastName": "S\u00e1nchez",
+        "shortName": "RSS"
+    },
+    "S76561198025192358": {
+        "firstName": "Jordi",
+        "lastName": "Cano",
+        "shortName": "JCA"
     }
 }

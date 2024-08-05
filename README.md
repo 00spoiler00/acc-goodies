@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 20240805
+
+- Remove X axis labels for sparlines
+- Avoid 0 values in stats
+- Fix TCX<->GTC PCup category
+
 ## 20240731
 
 - Unify hotlap and fetch. 

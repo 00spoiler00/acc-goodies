@@ -99,5 +99,205 @@
             "Laptime": 89735,
             "Date": "2024-07-31"
         }
+    ],
+    "spa": [
+        {
+            "CarId": 36,
+            "CarModel": "Ford Mustang GT3",
+            "Category": "GT3",
+            "DriverId": "S76561198353290370",
+            "Driver": "Jordi Audet",
+            "Laptime": 136805,
+            "Date": "2024-08-02"
+        },
+        {
+            "CarId": 36,
+            "CarModel": "Ford Mustang GT3",
+            "Category": "GT3",
+            "DriverId": "S76561199446710049",
+            "Driver": "Jordi Navarro",
+            "Laptime": 138852,
+            "Date": "2024-08-04"
+        },
+        {
+            "CarId": 30,
+            "CarModel": "BMW M4 GT3",
+            "Category": "GT3",
+            "DriverId": "S76561198025113568",
+            "Driver": "JOAN ESTEVE",
+            "Laptime": 142950,
+            "Date": "2024-08-01"
+        },
+        {
+            "CarId": 36,
+            "CarModel": "Ford Mustang GT3",
+            "Category": "GT3",
+            "DriverId": "S76561198299526897",
+            "Driver": "Carles Figuera",
+            "Laptime": 141160,
+            "Date": "2024-08-05"
+        },
+        {
+            "CarId": 36,
+            "CarModel": "Ford Mustang GT3",
+            "Category": "GT3",
+            "DriverId": "S76561198109408222",
+            "Driver": "Carlos Jimenez",
+            "Laptime": 139202,
+            "Date": "2024-08-01"
+        },
+        {
+            "CarId": 51,
+            "CarModel": "Aston Martin Vantage GT4",
+            "Category": "GT4",
+            "DriverId": "S76561198109408222",
+            "Driver": "Carlos Jimenez",
+            "Laptime": 152827,
+            "Date": "2024-08-01"
+        },
+        {
+            "CarId": 84,
+            "CarModel": "Mercedes AMG GT2",
+            "Category": "GT2",
+            "DriverId": "S76561198109408222",
+            "Driver": "Carlos Jimenez",
+            "Laptime": 147315,
+            "Date": "2024-08-01"
+        },
+        {
+            "CarId": 36,
+            "CarModel": "Ford Mustang GT3",
+            "Category": "GT3",
+            "DriverId": "S76561198085652399",
+            "Driver": "Marc Boada",
+            "Laptime": 138515,
+            "Date": "2024-08-05"
+        },
+        {
+            "CarId": 60,
+            "CarModel": "Mercedes AMG GT4",
+            "Category": "GT4",
+            "DriverId": "S76561198353290370",
+            "Driver": "Jordi Audet",
+            "Laptime": 150617,
+            "Date": "2024-08-01"
+        },
+        {
+            "CarId": 32,
+            "CarModel": "Ferrari 296 GT3",
+            "Category": "GT3",
+            "DriverId": "S76561197966264308",
+            "Driver": "David Guerra",
+            "Laptime": 140087,
+            "Date": "2024-08-03"
+        },
+        {
+            "CarId": 36,
+            "CarModel": "Ford Mustang GT3",
+            "Category": "GT3",
+            "DriverId": "S76561198445932095",
+            "Driver": "David Botello",
+            "Laptime": 137760,
+            "Date": "2024-08-03"
+        },
+        {
+            "CarId": 20,
+            "CarModel": "AMR V8 Vantage",
+            "Category": "GT3",
+            "DriverId": "S76561199003188470",
+            "Driver": "David Mula",
+            "Laptime": 140537,
+            "Date": "2024-08-01"
+        },
+        {
+            "CarId": 32,
+            "CarModel": "Ferrari 296 GT3",
+            "Category": "GT3",
+            "DriverId": "S76561198085652399",
+            "Driver": "Marc Boada",
+            "Laptime": 138547,
+            "Date": "2024-08-05"
+        },
+        {
+            "CarId": 34,
+            "CarModel": "Porsche 992 GT3 R",
+            "Category": "GT3",
+            "DriverId": "S76561199446710049",
+            "Driver": "Jordi Navarro",
+            "Laptime": 139802,
+            "Date": "2024-08-02"
+        },
+        {
+            "CarId": 36,
+            "CarModel": "Ford Mustang GT3",
+            "Category": "GT3",
+            "DriverId": "S76561198271730696",
+            "Driver": "Iban Vil\u00e0",
+            "Laptime": 141222,
+            "Date": "2024-08-02"
+        },
+        {
+            "CarId": 32,
+            "CarModel": "Ferrari 296 GT3",
+            "Category": "GT3",
+            "DriverId": "S76561199651530367",
+            "Driver": "Carles LG",
+            "Laptime": 144532,
+            "Date": "2024-08-02"
+        },
+        {
+            "CarId": 36,
+            "CarModel": "Ford Mustang GT3",
+            "Category": "GT3",
+            "DriverId": "S76561197966264308",
+            "Driver": "David Guerra",
+            "Laptime": 143705,
+            "Date": "2024-08-02"
+        },
+        {
+            "CarId": 34,
+            "CarModel": "Porsche 992 GT3 R",
+            "Category": "GT3",
+            "DriverId": "S76561199188154057",
+            "Driver": "Joan Castillo",
+            "Laptime": 140282,
+            "Date": "2024-08-03"
+        },
+        {
+            "CarId": 36,
+            "CarModel": "Ford Mustang GT3",
+            "Category": "GT3",
+            "DriverId": "S76561198350960275",
+            "Driver": "Roge Lorente",
+            "Laptime": 137452,
+            "Date": "2024-08-03"
+        },
+        {
+            "CarId": 34,
+            "CarModel": "Porsche 992 GT3 R",
+            "Category": "GT3",
+            "DriverId": "S76561199115318422",
+            "Driver": "Ram\u00f3n S\u00e1nchez",
+            "Laptime": 138552,
+            "Date": "2024-08-04"
+        },
+        {
+            "CarId": 35,
+            "CarModel": "McLaren 720S GT3 Evo",
+            "Category": "GT3",
+            "DriverId": "S76561198271730696",
+            "Driver": "Iban Vil\u00e0",
+            "Laptime": 143402,
+            "Date": "2024-08-04"
+        },
+        {
+            "CarId": 28,
+            "CarModel": "Porsche 992 GT3 Cup",
+            "Category": "GTC",
+            "DriverId": "S76561198025192358",
+            "Driver": "Jordi Cano",
+            "Laptime": 145162,
+            "Date": "2024-08-04"
+        }
     ]
 }

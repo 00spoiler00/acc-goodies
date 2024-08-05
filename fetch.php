@@ -21,10 +21,6 @@ class PitskillDataFetcher
         'Licence' => 'payload.tpc_driver_data.licence_class',
         'PitRep' => 'payload.tpc_driver_data.currentPitRep',
         'PitSkill' => 'payload.tpc_driver_data.currentPitSkill',
-        // 'Last Race Date' => 'payload.tpc_driver_data.stats.lastRaceDate',
-        // 'Daily Races' => 'payload.tpc_driver_data.daily_race_count',
-        // 'VIP Level' => 'payload.sigma_user_data.vip_level',
-        // 'Signup Date' => 'payload.sigma_user_data.signupDate',
     ];
 
     private $registrationColumns = [
@@ -57,7 +53,7 @@ class PitskillDataFetcher
             // if($id == 18098) file_put_contents('json/exampleSourceDriver.json', json_encode($driver));
                 
             // Create statistics
-            $this->createStats($id, $driverJson);
+            $this->createStatsForDriverId($id, $driverJson);
             
             $driver['Driver Id'] = $id;
             foreach ($this->driverColumns as $column => $path) {
@@ -146,7 +142,7 @@ class PitskillDataFetcher
           file_put_contents('data/notifications.json', json_encode($notifications->toArray()));
     }
 
-    private function createStats(int $id, array $data) : void
+    private function createStatsForDriverId(int $id, array $data) : void
     {
         $currentPitRep = $this->getValue($data, 'payload.tpc_driver_data.currentPitRep');
         $currentPitSkill = $this->getValue($data, 'payload.tpc_driver_data.currentPitSkill');
@@ -158,14 +154,14 @@ class PitskillDataFetcher
         $lastPitRep = end($this->stats[$id]['PitRep']);
         $lastPitSkill = end($this->stats[$id]['PitSkill']);
 
-        if ($lastPitRep['value'] !== $currentPitRep) {
+        if ($lastPitRep['value'] !== $currentPitRep && $currentPitRep > 0) {
             $this->stats[$id]['PitRep'][] = [
                 'date' => Carbon::now()->timestamp,
                 'value' => $currentPitRep,
             ];
         }
         
-        if ($lastPitSkill['value'] !== $currentPitSkill) {
+        if ($lastPitSkill['value'] !== $currentPitSkill && $currentPitSkill > 0) {
             $this->stats[$id]['PitSkill'][] = [
                 'date' => Carbon::now()->timestamp,
                 'value' => $currentPitSkill,
@@ -181,6 +177,7 @@ class PitskillDataFetcher
 
         $pitRepChanges = [];
         $pitSkillChanges = [];
+        $promotions = [];
     
         foreach ($this->stats as $id => $values) {
             if (count($values['PitRep']) > 1) {
@@ -221,18 +218,6 @@ class PitskillDataFetcher
             'PitSkillDecreases' => $largestSkillDecreases,
             'Promotions' => array_unique($promotions),
         ];
-    }
-
-    private function loadStats() : void
-    {
-        if (file_exists('data/stats.json')) {
-            $this->stats = json_decode(file_get_contents('data/stats.json'), true);
-        }
-    }
-
-    private function saveStats() : void
-    {
-        file_put_contents('data/stats.json', json_encode($this->stats));
     }
 
     // TODO: Move this to frontend parsing and flow control
@@ -339,6 +324,21 @@ class PitskillDataFetcher
 
         file_put_contents('data/data.json', json_encode($data));
     }
+
+    // region Load and save stats
+
+    private function loadStats() : void
+    {
+        if (file_exists('data/stats.json')) {
+            $this->stats = json_decode(file_get_contents('data/stats.json'), true);
+        }
+    }
+
+    private function saveStats() : void
+    {
+        file_put_contents('data/stats.json', json_encode($this->stats));
+    }
+
 }
 
 class HotlapProcessor
@@ -356,6 +356,8 @@ class HotlapProcessor
         self::processFiles();
         self::saveData();
     }
+    
+    // #region File management
 
     private static function loadExistingData()
     {
@@ -489,27 +491,27 @@ class HotlapProcessor
             6 => ['Nissan GT-R Nismo GT3', 'GT3'],
             7 => ['BMW M6 GT3', 'GT3'],
             8 => ['Bentley Continental GT3', 'GT3'],
-            9 => ['Porsche 911 II GT3 Cup', 'GTC'],
+            9 => ['Porsche 991 II GT3 Cup', 'TCX'],
             10 => ['Nissan GT-R Nismo GT3', 'GT3'],
             11 => ['Bentley Continental GT3', 'GT3'],
             12 => ['AMR V12 Vantage GT3', 'GT3'],
             13 => ['Reiter Engineering R-EX GT3', 'GT3'],
             14 => ['Emil Frey Jaguar G3', 'GT3'],
             15 => ['Lexus RC F GT3', 'GT3'],
-            16 => ['Lamborghini Huracán GT3 Evo', 'GT3'],
+            16 => ['Lamborghini Huracan GT3 Evo', 'GT3'],
             17 => ['Honda NSX GT3', 'GT3'],
-            18 => ['Lamborghini Huracan SuperTrofeo', 'GTC'],
+            18 => ['Lamborghini Huracan SuperTrofeo', 'TCX'],
             19 => ['Audi R8 LMS Evo', 'GT3'],
             20 => ['AMR V8 Vantage', 'GT3'],
             21 => ['Honda NSX GT3 Evo', 'GT3'],
             22 => ['McLaren 720S GT3', 'GT3'],
-            23 => ['Porsche 911 II GT3 R', 'GT3'],
+            23 => ['Porsche 991 II GT3 R', 'GT3'],
             24 => ['Ferrari 488 GT3 Evo', 'GT3'],
             25 => ['Mercedes-AMG GT3', 'GT3'],
-            26 => ['Ferrari 488 Challenge Evo', 'GTC'],
+            26 => ['Ferrari 488 Challenge Evo', 'TCX'],
             27 => ['BMW M2 Club Sport Racing', 'TCX'],
             28 => ['Porsche 992 GT3 Cup', 'GTC'],
-            29 => ['Lamborghini Huracán SuperTrofeo EVO2', 'GTC'],
+            29 => ['Lamborghini Huracán SuperTrofeo EVO2', 'TCX'],
             30 => ['BMW M4 GT3', 'GT3'],
             31 => ['Audi R8 LMS GT3 Evo 2', 'GT3'],
             32 => ['Ferrari 296 GT3', 'GT3'],
@@ -517,23 +519,23 @@ class HotlapProcessor
             34 => ['Porsche 992 GT3 R', 'GT3'],
             35 => ['McLaren 720S GT3 Evo', 'GT3'],
             36 => ['Ford Mustang GT3', 'GT3'],
-            37 => ['Alpine A110 GT4', 'GT4'],
-            38 => ['Aston Martin Vantage GT4', 'GT4'],
-            39 => ['Audi R8 LMS GT4', 'GT4'],
-            40 => ['BMW M4 GT4', 'GT4'],
-            41 => ['Chevrolet Camaro GT4', 'GT4'],
-            42 => ['Ginetta G55 GT4', 'GT4'],
-            43 => ['KTM X-Bow GT4', 'GT4'],
-            44 => ['Maserati MC GT4', 'GT4'],
-            45 => ['McLaren 570S GT4', 'GT4'],
-            46 => ['Mercedes AMG GT4', 'GT4'],
-            47 => ['Porsche 718 Cayman GT4 Clubsport', 'GT4'],
-            48 => ['Audi R8 LMS GT2', 'GT2'],
-            49 => ['KTM XBOW GT2', 'GT2'],
-            50 => ['Maserati MC20 GT2', 'GT2'],
-            51 => ['Mercedes AMG GT2', 'GT2'],
-            52 => ['Porsche 911 GT2 RS CS Evo', 'GT2'],
-            53 => ['Porsche 935', 'GT2']
+            50 => ['Alpine A110 GT4', 'GT4'],
+            51 => ['Aston Martin Vantage GT4', 'GT4'],
+            52 => ['Audi R8 LMS GT4', 'GT4'],
+            53 => ['BMW M4 GT4', 'GT4'],
+            55 => ['Chevrolet Camaro GT4', 'GT4'],
+            56 => ['Ginetta G55 GT4', 'GT4'],
+            57 => ['KTM X-Bow GT4', 'GT4'],
+            58 => ['Maserati MC GT4', 'GT4'],
+            59 => ['McLaren 570S GT4', 'GT4'],
+            60 => ['Mercedes AMG GT4', 'GT4'],
+            61 => ['Porsche 718 Cayman GT4 Clubsport', 'GT4'],
+            80 => ['Audi R8 LMS GT2', 'GT2'],
+            82 => ['KTM XBOW GT2', 'GT2'],
+            83 => ['Maserati MC20 GT2', 'GT2'],
+            84 => ['Mercedes AMG GT2', 'GT2'],
+            85 => ['Porsche 911 GT2 RS CS Evo', 'GT2'],
+            86 => ['Porsche 935', 'GT2'],
         ];
     
         // Check if the ID exists in the array and return the corresponding model and category

@@ -349,11 +349,7 @@
                             </v-template>
 
                             <v-template v-if="['PitSkill', 'PitRep'].includes(dialogMode)">
-                                <v-sparkline auto-draw smooth :value="dialogData" :color="dialogMode == 'PitSkill' ? 'primary' : 'secondary'" :height="300" :width="400" stroke-linecap="round">
-                                    <template v-slot:label="item">
-                                        {{ item.value }}
-                                    </template>
-                                </v-sparkline>
+                                <v-sparkline auto-draw smooth :value="dialogData" :color="dialogMode == 'PitSkill' ? 'primary' : 'secondary'" :height="300" :width="400" stroke-linecap="round" />
                             </v-template>
                         </v-card-text>
 
